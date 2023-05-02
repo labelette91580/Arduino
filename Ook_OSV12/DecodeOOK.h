@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string.h>
-#include  "reportSerial.h"
 void printHexa ( byte * data, byte pos);
+bool isReportSerial();
 
 #ifdef WIN32
 #else
