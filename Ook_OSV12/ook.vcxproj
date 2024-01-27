@@ -18,12 +18,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -48,7 +48,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Arduino\libraries\DecodeOOK;C:\Arduino\libraries\DecodeHomeEasy;C:\Arduino\libraries\def;C:\Arduino\libraries\RFM69;C:\Arduino\libraries\RFM69\pi;C:\Arduino\libraries\HagerDecoder;C:\Arduino\libraries\HomeEasyTransmitter;C:\Arduino\libraries\DecodeMD230;C:\Arduino\libraries\DecodeOTIO;C:\Arduino\Ook_OSV12;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -97,7 +97,6 @@
     <ClInclude Include="..\libraries\RFM69\RFM69.h" />
     <ClInclude Include="..\libraries\RFM69\RFM69registers.h" />
     <ClInclude Include="tfaDecoder.h" />
-    <ClInclude Include="DecodeOOK.h" />
     <ClInclude Include="Domotic.h" />
     <ClInclude Include="fifo.h" />
     <ClInclude Include="hager.h" />

@@ -102,9 +102,6 @@
     <ClInclude Include="..\libraries\DecodeOTIO\DecodeOTIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DecodeOOK.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="fifo.h">
       <Filter>Header Files</Filter>
     </ClInclude>

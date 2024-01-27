@@ -267,11 +267,11 @@ void RadioInit()
     reportPrint("RFM69 Init");
     radio.initialize(RF69_433MHZ,1,100);
     delay(10);
-    word wait = radio.setMode(RF69_MODE_RX);
+    radio.setMode(RF69_MODE_RX);
     if (isReportSerial())
     {
         Serial.print("READY:");
-	    Serial.println(wait);
+	    //Serial.println(wait);
     }
     //2400 bauds bit rate 3,4
     radio.writeReg(REG_BITRATEMSB,RF_BITRATEMSB_2400);

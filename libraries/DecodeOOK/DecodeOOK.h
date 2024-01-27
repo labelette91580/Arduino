@@ -36,15 +36,15 @@ static const char* Sstate[] = {
 
 
 typedef enum {
-	LSB_FIRST = 0,
-	MSB_FIRST = 1,
+	BIT_LSB_FIRST = 0,
+	BIT_MSB_FIRST = 1,
 } TBIT_STREAM ;
 
 class DecodeOOK {
 public:
     byte total_bits, max_bits,bits, flip, state, pos, data[16];
 
-	TBIT_STREAM bitStream = MSB_FIRST;
+	TBIT_STREAM bitStream = BIT_MSB_FIRST;
 //    byte lastId ;
 //    byte lastChannel ;
     byte lastCrc    ;
@@ -170,7 +170,7 @@ public:
     }
 	virtual void gotBit (char value) 
 	{
-		if ( bitStream == MSB_FIRST )
+		if ( bitStream == BIT_MSB_FIRST )
 			gotBitMsb ( value) ;
 		else
 			gotBitLsb ( value) ;
