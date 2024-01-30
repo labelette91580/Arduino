@@ -258,7 +258,7 @@ void Setup (byte pData, byte pClk, byte pLed, const char* DecoderList  ) ;
 
 void setup () {
     setReportType(REPORT_TYPE);
-    Setup ( PDATA, PCLK, ledPin, DecoderListInit  );
+    Setup ( PDATA, PDATA, ledPin, DecoderListInit  );
 
 }
 void RadioInit()
@@ -320,6 +320,10 @@ if (isReportSerial() )
 {
     Serial.print("Version ");
     Serial.println(VERSION);
+
+    Serial.print("Rx:");
+    Serial.print(Serial.getRxBufferSize());
+    
 }
     registerStdout();
 
