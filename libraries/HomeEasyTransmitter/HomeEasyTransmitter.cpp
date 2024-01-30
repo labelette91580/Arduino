@@ -48,8 +48,8 @@
 typedef unsigned char boolean;
 typedef unsigned char byte;
 typedef unsigned short word;
-#define cli() scheduler_realtime()
-#define sei() scheduler_standard() 
+#define noInterrupts() scheduler_realtime()
+#define interrupts()   scheduler_standard() 
 #define DelayMicroseconds(VALUE)     delayMicroseconds(VALUE);
 #define DelayMicrosecondsHard(VALUE) delayMicrosecondsHard(VALUE);
 extern "C" void delayMicrosecondsHard (unsigned int howLong);
@@ -94,7 +94,7 @@ void HomeEasyTransmitter::rfm69_set_data(byte state)
     if (clkPin>0)
         rfm69_set_data_with_clk(state) ;
     else
-        rfm69_set_data_with_clk( state);
+        rfm69_set_data_without_clk( state);
 }
 void HomeEasyTransmitter::rfm69_set_data_without_clk(byte state)
 {
@@ -153,7 +153,7 @@ void HomeEasyTransmitter::transmit(bool blnOn,unsigned long transmitterId, short
 {
   int i;
 
-  cli();
+  noInterrupts() ;
 
   // Do the latch sequence.. 
   rfm69_set_data( HIGH);
@@ -203,7 +203,7 @@ void HomeEasyTransmitter::transmit(bool blnOn,unsigned long transmitterId, short
   DelayMicrosecondsHard(LATCH2_HIGH);      // wait a moment
   rfm69_set_data( LOW);    // low again for 2675 - latch 2.
   DelayMicroseconds(LATCH2_LOW);      // wait a moment
-  sei();
+  interrupts() ;
 
 }
 

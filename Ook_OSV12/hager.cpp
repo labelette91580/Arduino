@@ -138,7 +138,7 @@ void HagerSendOne(byte * Pulse  )
 
 void HagerSend ( byte * addr , byte cmnd )
 {
-  cli();
+  noInterrupts() ;
   HagerChk=0;
   IdCmd=0;
   HagerSendOne(Header );
@@ -158,7 +158,7 @@ void HagerSend ( byte * addr , byte cmnd )
 	HagerChk = ~HagerChk + 1 ;
 		
 	HagerSendByte(HagerChk);
-  sei();
+  interrupts() ;
 
 }
 
