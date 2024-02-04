@@ -3,6 +3,8 @@
 #define VERSION 15
 
 
+#define BYTE byte
+
 typedef union tRBUF {
 //domotic structure
 	struct T_TEMP {
@@ -233,6 +235,25 @@ struct {	//response on a mode command from the application
 #endif
 	} RAIN;
 
+	struct {
+		BYTE	packetlength;
+		BYTE	packettype;
+		BYTE	subtype;
+		BYTE	seqnbr;
+		BYTE	id1;
+		BYTE	id2;
+		BYTE	count1;
+		BYTE	count2;
+		BYTE	count3;
+		BYTE	count4;
+#ifdef IS_BIG_ENDIAN
+		BYTE	rssi : 4;
+		BYTE	filler : 4;
+#else
+		BYTE	filler : 4;
+		BYTE	rssi : 4;
+#endif
+	} RFXMETER;
 
 }_tRBUF;	
 
@@ -322,6 +343,19 @@ struct {	//response on a mode command from the application
 //types for rain
 #define pTypeRAIN 0x55
 #define sTypeRAIN9 0x9   //TFA 30.3233.01 
+
+//RFXMeter
+#define pTypeRFXMeter 0x71
+#define sTypeRFXMeterCount 0x0
+#define sTypeRFXMeterInterval 0x1
+#define sTypeRFXMeterCalib 0x2
+#define sTypeRFXMeterAddr 0x3
+#define sTypeRFXMeterCounterReset 0x4
+#define sTypeRFXMeterCounterSet 0xB
+#define sTypeRFXMeterSetInterval 0xC
+#define sTypeRFXMeterSetCalib 0xD
+#define sTypeRFXMeterSetAddr 0xE
+#define sTypeRFXMeterIdent 0xF
 
 
 extern  tRBUF Cmd ;

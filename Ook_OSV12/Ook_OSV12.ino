@@ -62,6 +62,7 @@ byte PCLK  = 4 ;//pin for clk  input/output
 
 word    NbPulse  ;
 word    NbPulsePerSec ;
+word    NbPulsePerMin ;
 
 //etat du pulse
 byte        PulsePinData;
@@ -287,6 +288,7 @@ void Setup (byte rxPin, byte txPin, byte pLed, const char* pDecoderList  ) {
     PDATA = rxPin;
     PCLK  = -1 ;
     ledPin = pLed;
+    NbPulsePerMin = 0;
 
 if (isReportSerial() )
     Serial.begin(2000000);
@@ -329,6 +331,28 @@ if (isReportSerial() )
 
 }
 
+tRBUF rfxCmd;
+
+void sendRfxCount()
+{
+    int rssi = rssiGetAverage();
+    rfxCmd.RFXMETER.packettype = pTypeRFXMeter;
+    rfxCmd.RFXMETER.subtype    = sTypeRFXMeterCount;
+
+    rfxCmd.RFXMETER.packetlength = sizeof(rfxCmd.RFXMETER)-1;
+    rfxCmd.RFXMETER.rssi = rssi >> 8;
+    rfxCmd.RFXMETER.id1 = 1 ;
+    rfxCmd.RFXMETER.id1 = 2;
+
+    rfxCmd.RFXMETER.count1 = 0 ;
+    rfxCmd.RFXMETER.count2 = 0;
+    rfxCmd.RFXMETER.count3 = NbPulsePerMin >> 8;
+    rfxCmd.RFXMETER.count4 = NbPulsePerMin & 0x00ff;
+    Serial.write((byte*)&rfxCmd.RFXMETER, rfxCmd.RFXMETER.packetlength + 1);
+    NbPulsePerMin = 0;
+
+}
+
 //2 : toogle pin 1!0 set
 void PulseLed(int Level)
 {
@@ -338,7 +362,6 @@ void PulseLed(int Level)
 		ledPinLevel = !ledPinLevel;
 	else
 		ledPinLevel = Level;
-
 #ifdef RASPBERRY_PI
 //	if (ledPinLevel)
 //		system("echo 1 | sudo tee /sys/class/leds/led0/brightness > /dev/null");
@@ -387,7 +410,10 @@ void ManagePulseReception ( word p) {
 
             //get pinData
             PulsePinData = p & 1;
-            NbPulse++;
+            if (PulsePinData) {
+                NbPulse++;
+                NbPulsePerMin++;
+            }
 
 #if   OFFSET_DURATION_HIGH
             //offset sur pulse high for RFM69
@@ -415,6 +441,8 @@ void ManagePulseReception ( word p) {
 #endif
                 }
                 lastMinute = Seconds/60;
+
+                sendRfxCount();
             }
 
             while ( (Decoder=Decoders[i++]) != 0 )
