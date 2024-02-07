@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION 15
+#define VERSION 16
 
 
 #define BYTE byte
@@ -235,7 +235,39 @@ struct {	//response on a mode command from the application
 #endif
 	} RAIN;
 
-	struct {
+
+
+
+// 	struct {
+// 		BYTE	packetlength;
+// 		BYTE	packettype;
+// 		BYTE	subtype;
+// 		BYTE	seqnbr;
+// 		BYTE	id1;
+// 		BYTE	id2;
+// 		BYTE	id3;
+// 		BYTE	id4;
+// 		BYTE	counter1_0;
+// 		BYTE	counter1_1;
+// 		BYTE	counter1_2;
+// 		BYTE	counter1_3;
+// 		BYTE	counter2_0;
+// 		BYTE	counter2_1;
+// 		BYTE	counter2_2;
+// 		BYTE	counter2_3;
+// 		BYTE	state;
+// #ifdef IS_BIG_ENDIAN
+// 		BYTE	rssi : 4;
+// 		BYTE	battery_level : 4;
+// #else
+// 		BYTE	battery_level : 4;
+// 		BYTE	rssi : 4;
+// #endif
+// 	} CEENCODER;
+
+}_tRBUF;	
+
+typedef	struct {
 		BYTE	packetlength;
 		BYTE	packettype;
 		BYTE	subtype;
@@ -254,8 +286,6 @@ struct {	//response on a mode command from the application
 		BYTE	rssi : 4;
 #endif
 	} RFXMETER;
-
-}_tRBUF;	
 
 #define pTypeTEMP_BARO 0xF7
 #define sTypeBMP085 0x01
@@ -356,6 +386,12 @@ struct {	//response on a mode command from the application
 #define sTypeRFXMeterSetCalib 0xD
 #define sTypeRFXMeterSetAddr 0xE
 #define sTypeRFXMeterIdent 0xF
+
+//types for CARTELECTRONIC
+#define pTypeCARTELECTRONIC 0x60
+#define sTypeTIC 0x1
+#define sTypeCEencoder 0x2
+#define sTypeLinky 0x3
 
 
 extern  tRBUF Cmd ;

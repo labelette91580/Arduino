@@ -1,3 +1,9 @@
+modification size serial buffer
+#define SERIAL_RX_BUFFER_SIZE 256
+#define SERIAL_TX_BUFFER_SIZE 256
+
+definir dans C:\Users\pascal\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.5\cores\arduino\arduino.h
+
 tiny 85 
 http://digistump.com/package_digistump_index.json
 https://digistump.com/wiki/digispark/tutorials/connecting

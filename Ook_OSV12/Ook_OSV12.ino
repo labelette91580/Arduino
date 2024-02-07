@@ -63,6 +63,7 @@ byte PCLK  = 4 ;//pin for clk  input/output
 word    NbPulse  ;
 word    NbPulsePerSec ;
 word    NbPulsePerMin ;
+word    NbDecodedPackets ;
 
 //etat du pulse
 byte        PulsePinData;
@@ -289,6 +290,7 @@ void Setup (byte rxPin, byte txPin, byte pLed, const char* pDecoderList  ) {
     PCLK  = -1 ;
     ledPin = pLed;
     NbPulsePerMin = 0;
+    NbDecodedPackets=0;
 
 if (isReportSerial() )
     Serial.begin(2000000);
@@ -324,34 +326,60 @@ if (isReportSerial() )
     Serial.println(VERSION);
 
     Serial.print("Rx:");
-    Serial.print(Serial.getRxBufferSize());
     
+#ifdef ESP8266
+     Serial.print(Serial.getRxBufferSize());
+#else
+     Serial.print(SERIAL_RX_BUFFER_SIZE);
+#endif
 }
     registerStdout();
 
 }
 
-tRBUF rfxCmd;
-
-void sendRfxCount()
+RFXMETER rfxCmd;
+void sendRfxCount(byte id , word value )
 {
     int rssi = rssiGetAverage();
-    rfxCmd.RFXMETER.packettype = pTypeRFXMeter;
-    rfxCmd.RFXMETER.subtype    = sTypeRFXMeterCount;
+    rfxCmd.packettype = pTypeRFXMeter;
+    rfxCmd.subtype    = sTypeRFXMeterCount;
 
-    rfxCmd.RFXMETER.packetlength = sizeof(rfxCmd.RFXMETER)-1;
-    rfxCmd.RFXMETER.rssi = rssi >> 8;
-    rfxCmd.RFXMETER.id1 = 1 ;
-    rfxCmd.RFXMETER.id1 = 2;
+    rfxCmd.packetlength = sizeof(rfxCmd)-1;
+    rfxCmd.rssi = (rssi/10) >> 8;
+    rfxCmd.id1 = 0 ;
+    rfxCmd.id2 = id;
+    rfxCmd.count1 = 0 ;
+    rfxCmd.count2 = 0;
+    rfxCmd.count3 = value >> 8;
+    rfxCmd.count4 = value & 0x00ff;
 
-    rfxCmd.RFXMETER.count1 = 0 ;
-    rfxCmd.RFXMETER.count2 = 0;
-    rfxCmd.RFXMETER.count3 = NbPulsePerMin >> 8;
-    rfxCmd.RFXMETER.count4 = NbPulsePerMin & 0x00ff;
-    Serial.write((byte*)&rfxCmd.RFXMETER, rfxCmd.RFXMETER.packetlength + 1);
-    NbPulsePerMin = 0;
+    Serial.write((byte*)&rfxCmd, rfxCmd.packetlength + 1);
+}
+
+/*
+void sendRfxCount2()
+{
+    int rssi = rssiGetAverage();
+    rfxCmd.CEENCODER.packettype = pTypeCARTELECTRONIC;
+    rfxCmd.CEENCODER.subtype    = sTypeCEencoder;
+    rfxCmd.CEENCODER.packetlength = sizeof(rfxCmd.CEENCODER)-1;
+    rfxCmd.CEENCODER.rssi = rssi >> 8;
+    rfxCmd.CEENCODER.id1 = 0 ;
+    rfxCmd.CEENCODER.id2 = 0;
+    rfxCmd.CEENCODER.id3 = 0;
+    rfxCmd.CEENCODER.id4 = 1;
+    rfxCmd.CEENCODER.counter1_0 = 0 ;
+    rfxCmd.CEENCODER.counter1_1 = 0;
+    rfxCmd.CEENCODER.counter1_2 = NbPulsePerMin >> 8;
+    rfxCmd.CEENCODER.counter1_3 = NbPulsePerMin & 0x00ff;
+    rfxCmd.CEENCODER.counter2_0 = 0 ;
+    rfxCmd.CEENCODER.counter2_1 = 0;
+    rfxCmd.CEENCODER.counter2_2 = NbDecodedPackets >> 8;
+    rfxCmd.CEENCODER.counter2_3 = NbDecodedPackets & 0x00ff;
+    Serial.write((byte*)&rfxCmd.CEENCODER, rfxCmd.CEENCODER.packetlength + 1);
 
 }
+*/
 
 //2 : toogle pin 1!0 set
 void PulseLed(int Level)
@@ -386,6 +414,7 @@ byte dumpPulse=0;
             PulseLed(2);
             
             Decoder->report();
+            NbDecodedPackets++;
         }
         Decoder->resetDecoder(); 
       }
@@ -442,7 +471,13 @@ void ManagePulseReception ( word p) {
                 }
                 lastMinute = Seconds/60;
 
-                sendRfxCount();
+				if (lastMinute & 1 )
+					sendRfxCount(1,NbPulsePerMin);
+				else
+					sendRfxCount(2,NbDecodedPackets);
+			    NbPulsePerMin = 0;
+				
+
             }
 
             while ( (Decoder=Decoders[i++]) != 0 )
