@@ -270,6 +270,58 @@ struct {
 
 }_tRBUF;	
 
+typedef union tRecBUF {
+//domotic structure
+struct  T_LIGHTING2{
+		byte	packetlength;   /* == 11 : longueur a partir de packettype */
+		byte	packettype;     /* 17    */
+		byte	subtype;
+		byte	seqnbr;
+		byte	id1;            /* id emetteur 0..3  */
+		byte	id2;            /* id emetteur 0..FF */
+		byte	id3;            /* id emetteur 0..FF */
+		byte	id4;            /* id emetteur 0..FF */
+		byte	unitcode;       /* unit 0.0xF        */
+		byte	cmnd;           /* 0 : off 1:On      */
+		byte	level;          /* dim level 0..15   */
+		byte	rssi ;
+//		byte	data[2] ;
+		
+	} LIGHTING2;
+
+struct {
+		byte	packetlength; // = 13
+		byte	packettype;
+		byte	subtype;
+		byte	seqnbr;
+		byte	cmnd;
+		byte	msg1;
+		byte	msg2;
+		byte	msg3;
+		byte	msg4;
+		byte	msg5;
+		byte	msg6;
+		byte	msg7;
+		byte	msg8;
+		byte	msg9;
+	} ICMND;
+byte Buffer[1] ; //for reception by char
+
+	struct {
+	BYTE	packetlength;
+	BYTE	packettype;
+	BYTE	subtype;
+	BYTE	seqnbr;
+	BYTE	repeat;
+	struct{
+		BYTE	uint_msb;
+		BYTE	uint_lsb;
+	} pulse[124];
+    } RAW;
+
+}_tRecBUF;	
+
+
 
 #define pTypeTEMP_BARO 0xF7
 #define sTypeBMP085 0x01
@@ -381,7 +433,7 @@ struct {
 #define sTypeRAW3 0x2
 #define sTypeRAW4 0x3
 
-extern  tRBUF Cmd ;
+extern  tRecBUF Cmd ;
 extern bool DomoticPacketReceived;
 
 bool DomoticReceptionInProgress();

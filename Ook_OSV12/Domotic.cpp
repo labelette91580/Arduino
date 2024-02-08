@@ -11,7 +11,7 @@
 #include "Config.h"
 
 
-tRBUF Cmd ;
+tRecBUF Cmd ;
 unsigned long  lastTime;  
 byte    receiveLength ;
 byte    LastZoneValue[4];
