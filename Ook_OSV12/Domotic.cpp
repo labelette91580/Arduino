@@ -546,3 +546,21 @@ void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word Rai
     }
 }
 
+extern int rssiGetAverage();
+void reportDomoticRfxCount(byte id , word value )
+{
+    int rssi = rssiGetAverage();
+    Send.RFXMETER.packettype = pTypeRFXMeter;
+    Send.RFXMETER.subtype    = sTypeRFXMeterCount;
+    Send.RFXMETER.packetlength = sizeof(Send.RFXMETER)-1;
+    Send.RFXMETER.rssi = (rssi/10) >> 8;
+    Send.RFXMETER.id1 = 0 ;
+    Send.RFXMETER.id2 = id;
+    Send.RFXMETER.count1 = 0 ;
+    Send.RFXMETER.count2 = 0;
+    Send.RFXMETER.count3 = value >> 8;
+    Send.RFXMETER.count4 = value & 0x00ff;
+
+    Serial.write((byte*)&Send.RFXMETER, Send.RFXMETER.packetlength + 1);
+}
+

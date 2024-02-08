@@ -20,8 +20,6 @@ typedef union tRBUF {
 		byte	battery_level : 4;
 		byte	rssi : 4;
 	} Temp;
-	
-	
 	struct T_TEMP_HUM{
 		byte	packetlength;
 		byte	packettype;
@@ -37,9 +35,6 @@ typedef union tRBUF {
 		byte	battery_level : 4;
 		byte	rssi : 4;
 	} Temp_Hum;
-	
-	
-	
 struct  T_LIGHTING2{
 		byte	packetlength;   /* == 11 : longueur a partir de packettype */
 		byte	packettype;     /* 17    */
@@ -57,9 +52,7 @@ struct  T_LIGHTING2{
 		
 	} LIGHTING2;
 
-byte Buffer[sizeof(struct T_LIGHTING2)] ;
-
-		struct {
+struct {
 		byte	packetlength; // = 13
 		byte	packettype;
 		byte	subtype;
@@ -75,7 +68,6 @@ byte Buffer[sizeof(struct T_LIGHTING2)] ;
 		byte	msg8;
 		byte	msg9;
 	} ICMND;
-
 struct {	//response on a mode command from the application
 		byte	packetlength; //= 20
 		byte	packettype;
@@ -99,16 +91,14 @@ struct {	//response on a mode command from the application
     byte	msg15;
     byte	msg16;
 	} IRESPONSE;
-	
-	struct {
+struct {
 		byte	packetlength;
 		byte	packettype;
 		byte	subtype;
 		byte	seqnbr;
 		byte	msg[17];
 	} UNDECODED;
-
-	struct {
+struct {
 		byte	packetlength;
 		byte	packettype;
 		byte	subtype;
@@ -125,8 +115,7 @@ struct {	//response on a mode command from the application
 		byte	rssi : 4;
 		byte	battery_level : 4;
 	} CURRENT;
-
-	struct {
+struct {
 		byte	packetlength;
 		byte	packettype;
 		byte	subtype;
@@ -147,8 +136,7 @@ struct {	//response on a mode command from the application
 		byte	battery_level : 4;
 		byte	rssi : 4;
 	} ENERGY;
-
-	struct {
+struct {
 		byte	packetlength;
 		byte	packettype;
 		byte	subtype;
@@ -171,8 +159,7 @@ struct {	//response on a mode command from the application
 		byte	rssi : 4;
 		byte	battery_level : 4;
 	} CURRENT_ENERGY;
-
- struct 
+struct 
 {
 	uint8_t len;
 	uint8_t type;
@@ -184,8 +171,7 @@ struct {	//response on a mode command from the application
 	uint8_t forecast;
 
 } _tTempBaro;
-
- 	struct {
+struct {
 		byte	packetlength;
 		byte	packettype;
 		byte	subtype;
@@ -213,8 +199,7 @@ struct {	//response on a mode command from the application
 		byte	rssi : 4;
 #endif
 	} TEMP_HUM_BARO;
-
-	struct {
+struct {
 		byte	packetlength;
 		byte	packettype;
 		byte	subtype;
@@ -234,9 +219,27 @@ struct {	//response on a mode command from the application
 		byte	rssi : 4;
 #endif
 	} RAIN;
+byte Buffer[1] ; //for reception by char
 
-
-
+struct {
+		BYTE	packetlength;
+		BYTE	packettype;
+		BYTE	subtype;
+		BYTE	seqnbr;
+		BYTE	id1;
+		BYTE	id2;
+		BYTE	count1;
+		BYTE	count2;
+		BYTE	count3;
+		BYTE	count4;
+#ifdef IS_BIG_ENDIAN
+		BYTE	rssi : 4;
+		BYTE	filler : 4;
+#else
+		BYTE	filler : 4;
+		BYTE	rssi : 4;
+#endif
+	} RFXMETER;
 
 // 	struct {
 // 		BYTE	packetlength;
@@ -267,31 +270,9 @@ struct {	//response on a mode command from the application
 
 }_tRBUF;	
 
-typedef	struct {
-		BYTE	packetlength;
-		BYTE	packettype;
-		BYTE	subtype;
-		BYTE	seqnbr;
-		BYTE	id1;
-		BYTE	id2;
-		BYTE	count1;
-		BYTE	count2;
-		BYTE	count3;
-		BYTE	count4;
-#ifdef IS_BIG_ENDIAN
-		BYTE	rssi : 4;
-		BYTE	filler : 4;
-#else
-		BYTE	filler : 4;
-		BYTE	rssi : 4;
-#endif
-	} RFXMETER;
 
 #define pTypeTEMP_BARO 0xF7
 #define sTypeBMP085 0x01
-
-
-
 
 #define cmdRESET	  0x00 // reset the receiver/transceiver
 #define cmdSTATUS	  0x02 // return firmware versions and configuration of the interface
@@ -393,6 +374,12 @@ typedef	struct {
 #define sTypeCEencoder 0x2
 #define sTypeLinky 0x3
 
+//RAW transit/receive
+#define pTypeRAW 0x7F
+#define sTypeRAW1 0x0
+#define sTypeRAW2 0x1
+#define sTypeRAW3 0x2
+#define sTypeRAW4 0x3
 
 extern  tRBUF Cmd ;
 extern bool DomoticPacketReceived;
@@ -413,5 +400,6 @@ void resetLastSensorValue();
 void reportDomoticTempBaro(const char* Name, byte id1, float temp, float baro, float PressureSeaLevel, float altitude, uint8_t forecast,  byte* data=0, byte pos = 0);
 void reportDomoticTempHumBaro(const char* Name, byte id1, byte unit, float temperature, float pressure, float PressureSeaLevel, uint8_t forecast, byte humidity, byte BatteryLevel, byte RssiLevel,  byte* data=0, byte pos = 0);
 void reportDomoticMD230(const byte* data, byte pos);
+void reportDomoticRfxCount(byte id, word value);
 
 

@@ -337,24 +337,6 @@ if (isReportSerial() )
 
 }
 
-RFXMETER rfxCmd;
-void sendRfxCount(byte id , word value )
-{
-    int rssi = rssiGetAverage();
-    rfxCmd.packettype = pTypeRFXMeter;
-    rfxCmd.subtype    = sTypeRFXMeterCount;
-
-    rfxCmd.packetlength = sizeof(rfxCmd)-1;
-    rfxCmd.rssi = (rssi/10) >> 8;
-    rfxCmd.id1 = 0 ;
-    rfxCmd.id2 = id;
-    rfxCmd.count1 = 0 ;
-    rfxCmd.count2 = 0;
-    rfxCmd.count3 = value >> 8;
-    rfxCmd.count4 = value & 0x00ff;
-
-    Serial.write((byte*)&rfxCmd, rfxCmd.packetlength + 1);
-}
 
 /*
 void sendRfxCount2()
@@ -472,9 +454,9 @@ void ManagePulseReception ( word p) {
                 lastMinute = Seconds/60;
 
 				if (lastMinute & 1 )
-					sendRfxCount(1,NbPulsePerMin);
+					reportDomoticRfxCount(1,NbPulsePerMin);
 				else
-					sendRfxCount(2,NbDecodedPackets);
+					reportDomoticRfxCount(2,NbDecodedPackets);
 			    NbPulsePerMin = 0;
 				
 
@@ -612,6 +594,7 @@ void ManageDomoticCmdEmission() {
             Cmd.LIGHTING2.id3 = NbPulsePerSec >> 8;
             Cmd.LIGHTING2.id4 = NbPulsePerSec & 0x00ff;
             Serial.write((byte*)&Cmd.LIGHTING2, Cmd.LIGHTING2.packetlength + 1);
+//            reportDomoticRfxCount(1,NbPulsePerSec);
         }
 #ifndef RASPBERRY_PI
         pinMode(PDATA, INPUT);
