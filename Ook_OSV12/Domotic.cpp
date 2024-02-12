@@ -102,20 +102,33 @@ void ReadDomoticCmdFromSerial()
 				}
         Cmd.Buffer[receiveLength++]=b;
 
-				//if packet len not valid , wait valid
-				if (    (Cmd.LIGHTING2.packetlength != 13 )
-					   && (Cmd.LIGHTING2.packetlength != 11)
-					)
-					receiveLength = 0;
+		//if packet len not valid , wait valid
+        if(receiveLength==2)
+        {
+			if (       ( (Cmd.LIGHTING2.packetlength == sizeof(Cmd.LIGHTING2)-1  ) && (Cmd.LIGHTING2.packettype == pTypeLighting2 ) )
+					   
+                    || ( (Cmd.ICMND.packetlength == sizeof(Cmd.ICMND)-1 ) && (Cmd.ICMND.packettype == 0              ) )
 
-				/* si paquet recu en entier */
-				if (receiveLength >= Cmd.LIGHTING2.packetlength + 1) {
-					DomoticPacketReceived=  true;
-					receiveLength = 0;
-				}
-				else
-					DomoticPacketReceived=  false;
+                    || (                                        (Cmd.LIGHTING2.packettype == pTypeRAW       ) )
+                )
+            {
+                //packet valid
+            }
+            else
+				receiveLength = 0;
+        }
 
+        if(receiveLength>2)
+        {
+
+		    /* si paquet recu en entier */
+		    if (receiveLength >= Cmd.LIGHTING2.packetlength + 1) {
+			    DomoticPacketReceived=  true;
+			    receiveLength = 0;
+		    }
+		    else
+			    DomoticPacketReceived=  false;
+        }
     }
 }    
 
@@ -550,17 +563,25 @@ extern int rssiGetAverage();
 void reportDomoticRfxCount(byte id , word value )
 {
     int rssi = rssiGetAverage();
-    Send.RFXMETER.packettype = pTypeRFXMeter;
-    Send.RFXMETER.subtype    = sTypeRFXMeterCount;
-    Send.RFXMETER.packetlength = sizeof(Send.RFXMETER)-1;
-    Send.RFXMETER.rssi = (rssi/10) >> 8;
-    Send.RFXMETER.id1 = 0 ;
-    Send.RFXMETER.id2 = id;
-    Send.RFXMETER.count1 = 0 ;
-    Send.RFXMETER.count2 = 0;
-    Send.RFXMETER.count3 = value >> 8;
-    Send.RFXMETER.count4 = value & 0x00ff;
 
-    Serial.write((byte*)&Send.RFXMETER, Send.RFXMETER.packetlength + 1);
+    if (isReportSerial())
+    {
+        reportSerial ( "RFXM",  0, id, 1 ,  INVALID_TEMP, INVALID_HUM, INVALID_POWER, INVALID_POWER, INVALID_PRESSURE , INVALID_PRESSURE, INVALID_RAIN ,0, 0, value  ) ;
+    }
+    if(isReportDomotic())
+    {
+        Send.RFXMETER.packettype = pTypeRFXMeter;
+        Send.RFXMETER.subtype    = sTypeRFXMeterCount;
+        Send.RFXMETER.packetlength = sizeof(Send.RFXMETER)-1;
+        Send.RFXMETER.rssi = (rssi/10) >> 8;
+        Send.RFXMETER.id1 = 0 ;
+        Send.RFXMETER.id2 = id;
+        Send.RFXMETER.count1 = 0 ;
+        Send.RFXMETER.count2 = 0;
+        Send.RFXMETER.count3 = value >> 8;
+        Send.RFXMETER.count4 = value & 0x00ff;
+
+        Serial.write((byte*)&Send.RFXMETER, Send.RFXMETER.packetlength + 1);
+    }
 }
 

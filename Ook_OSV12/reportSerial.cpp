@@ -148,7 +148,7 @@ void reportPrint(const char * mes)
 {
      if (isReportSerial()) Serial.print(mes); 
 }
-void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos) {
+void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos,word counter  ) {
 
 //Serial.println();
     printTab(TAB,Serial.print(Name)) ;
@@ -196,6 +196,11 @@ void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int te
     {
         Serial.print(" Rain:");
         Serial.print(Rain);
+    }
+    if (counter != INVALID_BYTE )
+    {
+        Serial.print(" Counter:");
+        Serial.print(counter);
     }
 
     printRSSI();

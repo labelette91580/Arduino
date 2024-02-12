@@ -306,17 +306,19 @@ struct {
 		byte	msg9;
 	} ICMND;
 byte Buffer[1] ; //for reception by char
+word Word  [1] ; //for reception by char
 
-	struct {
+	struct  {
 	BYTE	packetlength;
 	BYTE	packettype;
 	BYTE	subtype;
 	BYTE	seqnbr;
 	BYTE	repeat;
-	struct{
-		BYTE	uint_msb;
-		BYTE	uint_lsb;
-	} pulse[124];
+//	struct{
+//		BYTE	uint_msb;
+//		BYTE	uint_lsb;
+//	} pulse[124];
+	byte pulse[124*2];
     } RAW;
 
 }_tRecBUF;	
@@ -326,17 +328,20 @@ byte Buffer[1] ; //for reception by char
 #define pTypeTEMP_BARO 0xF7
 #define sTypeBMP085 0x01
 
-#define cmdRESET	  0x00 // reset the receiver/transceiver
-#define cmdSTATUS	  0x02 // return firmware versions and configuration of the interface
-#define cmdStartRec	0x07 // start RFXtrx receiver
+//types for Interface Control
+#define pTypeInterfaceControl 0x00
+#define sTypeInterfaceCommand 0x00
+#define cmdRESET	0x00 // reset the receiver/transceiver
+#define cmdSTATUS	0x02 // return firmware versions and configuration of the interface
+#define cmdSETMODE	0x03 // set configuration of the interface
 
-#define trxType43392 0x53
+#define cmdSAVE		0x06 // save receiving modes of the receiver/transceiver in non-volatile memory
+#define cmdStartRec	0x07 // start RFXtrx receiver
 
 #define pTypeInterfaceMessage 0x01
 #define sTypeInterfaceResponse 0x00
 
-#define sTypeInterfaceCommand 0x00
-
+#define trxType43392 0x53
 
 #define pTypeLighting2 0x11
 #define sTypeAC 0x0
