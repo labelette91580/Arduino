@@ -35,7 +35,7 @@ class HomeEasyTransmitter
     void SetTransmitBuffer(word* buffer,bool blnOn,unsigned long transmitterId, short recipient);
     void SetSendBit(word* buffer, bool b);
     void SetSendPair(word* buffer, bool b);
-
+    void transmitRaw(word * pulses , byte NbPulses );
 
 };
 
