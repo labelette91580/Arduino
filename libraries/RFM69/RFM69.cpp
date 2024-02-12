@@ -33,6 +33,7 @@
 #include <RFM69.h>
 #include <RFM69registers.h>
 
+#define MAX_WAIT 0x7ff0
 
 volatile byte RFM69::DATA[RF69_MAX_DATA_LEN];
 volatile byte RFM69::_mode;       // current transceiver state
@@ -47,7 +48,7 @@ RFM69* RFM69::selfPointer;
 
 bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
 {
-	byte i=0;
+	word i=0;
   const byte CONFIG[][2] =
   {
     /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
@@ -98,9 +99,11 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
   pinMode(_slaveSelectPin, OUTPUT);
   SPI.begin();
   
-	do { writeReg(REG_SYNCVALUE1, 0xaa);i++; }while ((readReg(REG_SYNCVALUE1) != 0xaa)&&(i<10) );
+	do { writeReg(REG_SYNCVALUE1, 0xaa);i++; }while ((readReg(REG_SYNCVALUE1) != 0xaa)&&(i< MAX_WAIT) );
+	if (i >= MAX_WAIT)
+		return false;
 	i=0;
-	do { writeReg(REG_SYNCVALUE1, 0x55);i++; }while ((readReg(REG_SYNCVALUE1) != 0x55)&&(i<10) );
+	do { writeReg(REG_SYNCVALUE1, 0x55);i++; }while ((readReg(REG_SYNCVALUE1) != 0x55)&&(i< MAX_WAIT) );
 
   for (byte i = 0; CONFIG[i][0] != 255; i++)
     writeReg(CONFIG[i][0], CONFIG[i][1]);
@@ -112,11 +115,14 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
   setHighPower(_isRFM69HW); //called regardless if it's a RFM69W or RFM69HW
   setMode(RF69_MODE_STANDBY);
 	i=0;
-	while (((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00)&&(i++<10)); // Wait for ModeReady
+	while (((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00)&&(i++< MAX_WAIT)); // Wait for ModeReady
 //  attachInterrupt(_interruptNum, RFM69::isr0, RISING);
 
   selfPointer = this;
   _address = nodeID;
+  if (i >= MAX_WAIT)
+	  return false;
+  else
   return true;
 }
 
@@ -155,7 +161,12 @@ void RFM69::setMode(byte newMode)
 	// we are using packet mode, so this check is not really needed
   // but waiting for mode ready is necessary when going from sleep because the FIFO may not be immediately available from previous mode
 //	while (_mode == RF69_MODE_SLEEP && (readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // Wait for ModeReady
-	while (( readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00); // Wait for ModeReady
+	word  i = MAX_WAIT;
+	while ( ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && (i--!=0) )
+	{
+	}; // Wait for ModeReady
+//	Serial.print("READY:");
+//	Serial.println(MAX_WAIT-i);
 
 	_mode = newMode;
 }
@@ -525,9 +536,9 @@ void RFM69::readAllRegs()
 
 byte RFM69::readTemperature(byte calFactor)  //returns centigrade
 {
-  setMode(RF69_MODE_STANDBY);
+//  setMode(RF69_MODE_STANDBY);
   writeReg(REG_TEMP1, RF_TEMP1_MEAS_START);
-  while ((readReg(REG_TEMP1) & RF_TEMP1_MEAS_RUNNING)) Serial.print('*');
+  while ((readReg(REG_TEMP1) & RF_TEMP1_MEAS_RUNNING)) ;
   return ~readReg(REG_TEMP2) + COURSE_TEMP_COEF + calFactor; //'complement'corrects the slope, rising temp = rising val
 }												   	  // COURSE_TEMP_COEF puts reading in the ballpark, user can add additional correction
 
