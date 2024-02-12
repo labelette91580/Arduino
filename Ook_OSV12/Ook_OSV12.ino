@@ -125,7 +125,7 @@ char DecoderListInit[] =
 #ifdef RAIN_ENABLE        
                           "RAIN"     ";"
 #endif
-
+"END;"
 ;
 
 
@@ -174,14 +174,30 @@ void createDecoderList(const char* DecoderList)
         name[pte-ptb]=0;
         pte++  ;
         ptb = name;
+#ifdef OOK_ENABLE         
         if (stricmp(ptb,  "OOK"      )==0) { Decoders[index++] = new   OregonDecoderV2() ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
-//      if (stricmp(ptb,  "OTIO"     )==0) { Decoders[index++] = new   DecodeOTIO(2);    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
-//      if (stricmp(ptb,  "HAGER"    )==0) { Decoders[index++] = new   HagerDecoder()    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef OTIO_ENABLE        
+      if (stricmp(ptb,  "OTIO"     )==0) { Decoders[index++] = new   DecodeOTIO(2);    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef HAGER_ENABLE       
+      if (stricmp(ptb,  "HAGER"    )==0) { Decoders[index++] = new   HagerDecoder()    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef HOMEEASY_ENABLE    
         if (stricmp(ptb,  "HOMEEASY" )==0) { Decoders[index++] = new   DecodeHomeEasy()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
-//      if (stricmp(ptb,  "MD230"    )==0) { Decoders[index++] = new   DecodeMD230(2)    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef MD230_ENABLE       
+      if (stricmp(ptb,  "MD230"    )==0) { Decoders[index++] = new   DecodeMD230(2)    ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef RUBICSON_ENABLE    
         if (stricmp(ptb,  "RUBICSON" )==0) { Decoders[index++] = new   DecodeRubicson()  ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef HIDEKI_ENABLE      
         if (stricmp(ptb,  "HIDEKI"   )==0) { Decoders[index++] = new   Hideki()          ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+#ifdef RAIN_ENABLE        
         if (stricmp(ptb,  "RAIN"     )==0) { Decoders[index++] = new   DecodeRain(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
         ptb=pte ;
         pte = strchr(ptb,';');
         Decoders[index]=0;
@@ -256,6 +272,10 @@ void ext_int_1(void) {
     fifo.put(pulse);
 }
 
+#ifdef RFM69_ENABLE
+#include "SerialRfmCmd.h"
+#endif
+
 void Setup (byte pData, byte pClk, byte pLed, const char* DecoderList  ) ;
 
 void setup () {
@@ -267,7 +287,12 @@ void RadioInit()
 {
 #ifdef RFM69_ENABLE
     reportPrint("RFM69 Init");
-    radio.initialize(RF69_433MHZ,1,100);
+    bool ok = radio.initialize(RF69_433MHZ,1,100);
+    if (ok)
+        reportPrint("ok ");
+    else
+        reportPrint("ko ");
+
     delay(10);
     radio.setMode(RF69_MODE_RX);
     if (isReportSerial())
@@ -535,17 +560,17 @@ void ManageDomoticCmdEmission() {
      if (isReportSerial()) 
      {
          Serial.print("Cmd:");
-         printHexa(&Cmd.ICMND.packetlength, Cmd.ICMND.packetlength );
-         Serial.print("\n");
+         printHexa(&Cmd.ICMND.packetlength, Cmd.ICMND.packetlength+1 );
+         Serial.println();
      }
     //start receive cmd
-    if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdStartRec) ) {  
+    if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdStartRec) ) {  
         DomoticStartReceive();
     }
-    else if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdSTATUS) ) {  
+    else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdSTATUS) ) {  
         DomoticStatus();
     }
-    else if ( (Cmd.ICMND.packettype == 0)&& (Cmd.ICMND.cmnd==cmdRESET) ) {  
+    else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdRESET) ) {  
     }
     else
     {
@@ -569,6 +594,13 @@ void ManageDomoticCmdEmission() {
                     easy->SetTransmitBuffer(transmitBuffer,Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
                     sendBuffer(transmitBuffer);
 #else
+                 if (isReportSerial()) 
+                 {
+                     Serial.print("cmd:");Serial.print(Cmd.LIGHTING2.cmnd);
+                     Serial.print("id:");Serial.print(getLightingId());
+                     Serial.print("cmd:");Serial.print(Cmd.LIGHTING2.unitcode);
+                     Serial.println();
+                 }
                  easy->setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
 #endif
                     Cmd.LIGHTING2.subtype = 1;
@@ -580,6 +612,49 @@ void ManageDomoticCmdEmission() {
                 }
                 else
                     Cmd.LIGHTING2.subtype = 2;
+        }
+        else
+        if (Cmd.RAW.packettype==pTypeRAW ) 
+        {
+            byte Nbrepeat = Cmd.RAW.repeat ;
+            byte NbPulse  = (Cmd.RAW.packetlength - 4 ) / 2 ;
+            for (byte ii = 0 ; ii<NbPulse;ii++){
+                word wd = Cmd.Buffer[ii*2+5];
+                wd = wd *256 ;
+                wd = wd + Cmd.Buffer[ii*2+1+5] ;
+                Cmd.Word[ii] = wd ;
+            }
+            Cmd.Word[NbPulse] = 0 ;
+//            NbPulse = sizeof(pulses)/sizeof(word) ;
+            if (isReportSerial()) 
+            {
+                Serial.print("Raw:");Serial.print(Nbrepeat);Serial.print(" ");Serial.print(NbPulse);Serial.print(" ");
+                for (byte ii = 0 ; ii<NbPulse;ii++){
+                    Serial.print(Cmd.Word[ii]) ;
+                    Serial.print(" ");
+                    Serial.print(Cmd.Word[ii],16) ;
+                    Serial.print(" ");
+                }
+//                for (byte ii = 0 ; ii<10;ii++){
+//                    Serial.print(pulses[ii]) ;
+//                    Serial.print(" ");
+//                }
+                Serial.println();
+            }
+///---------------
+
+            //-------------
+            easy-> initPin();
+            while  ( Nbrepeat )
+            {
+                Nbrepeat--;
+//                easy->transmitRaw(Cmd.Word,NbPulse);
+                easy->transmitRaw(pulses,NbPulse);
+                 delay(10);
+            }
+            easy-> deactivatePin();
+
+
         }
         else
                 Cmd.LIGHTING2.subtype = 3;
