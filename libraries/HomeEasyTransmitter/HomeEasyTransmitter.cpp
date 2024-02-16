@@ -309,7 +309,7 @@ void HomeEasyTransmitter::SetSendPair(word* buffer, bool b)
 //end with 0
 void HomeEasyTransmitter::SetTransmitBuffer(word* buffer,bool blnOn,unsigned long transmitterId, short recipient)
 {
-  char i;
+  signed char i;
   
   // Do the latch sequence.. 
   //rfm69_set_data( HIGH);
@@ -362,7 +362,7 @@ void HomeEasyTransmitter::SetTransmitBuffer(word* buffer,bool blnOn,unsigned lon
   SetDelay(0);
 }
 
-void HomeEasyTransmitter::transmitRaw(word * pulses , byte NbPulses )
+void HomeEasyTransmitter::transmitRaw(word * pulses  )
 {
   byte pinLevel;
 
@@ -379,4 +379,15 @@ void HomeEasyTransmitter::transmitRaw(word * pulses , byte NbPulses )
   rfm69_set_data( LOW);    // low again for 2675 - latch 2.
   interrupts() ;
 }
+void HomeEasyTransmitter::transmitRawBuffer(word * pulses , byte nbTransmit )
+{
+    initPin();
+    while  ( nbTransmit )
+    {
+            transmitRaw(pulses);
+            //delay(10);
+            nbTransmit--;
+    }
+    deactivatePin();
 
+}
