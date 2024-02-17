@@ -97,7 +97,7 @@ void ReadDomoticCmdFromSerial()
                 receiveLength = 0 ;
         }
         lastTime = millis();
-				if (receiveLength >= sizeof(_tRBUF)) {
+				if (receiveLength >= sizeof(Cmd)) {
 					receiveLength = 0;
 				}
         Cmd.Buffer[receiveLength++]=b;
