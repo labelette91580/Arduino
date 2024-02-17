@@ -51,6 +51,12 @@ TFifo  fifo;
 
 byte ledPin = LED_BUILTIN ;
 
+//1 = dump pulse len to serial
+byte dumpPulse=0;     ////format word
+byte dumpPulseByte=0; //format hexa byte / 10
+
+
+
 #ifdef ESP8266
 byte PDATA = 5 ;// GPIO5 = D1 sur la carte wiimos
 byte PCLK  = 4 ;// GPIO4 = D2 sur la carte wiimos
@@ -241,6 +247,25 @@ inline static void write(word w)
   
 }
 
+inline static void writeHexaByte(word w)
+{
+  static byte nbc = 0;
+
+  byte ww ;
+  if (w>=2550) 
+    ww = 254 + (w & 1) ;
+  else
+    ww = w / 10 + (w & 1) ;
+
+  Serial.write((char)DectoHex( ww >> 4  ) );   Serial.write((char)DectoHex( ww  & 0x0F      ) );   Serial.write(',');
+
+  nbc++;
+  if ((nbc%16) == 0 )
+    Serial.write('\n');
+
+  
+}
+
 //le signal du RFM69 entre sur int ext    d3 : int1 
 //sur 8266 : interrupt shall be in IRAM
 #ifdef ESP8266
@@ -408,9 +433,6 @@ void PulseLed(int Level)
 #endif
 }
 
-//1 = dump pulse len to serial
-byte dumpPulse=0;
-
  void managedDecoder(DecodeOOK* Decoder , word p , byte  PinData )
  {
     {
@@ -450,6 +472,12 @@ void ManagePulseReception ( word p) {
                 NbPulse++;
                 NbPulsePerMin++;
             }
+            if (dumpPulseByte)
+                if (p>00)
+                {       
+                   writeHexaByte(p);
+                }
+
 
 #if   OFFSET_DURATION_HIGH
             //offset sur pulse high for RFM69
@@ -602,6 +630,10 @@ void ManageDomoticCmdEmission() {
                      Serial.println();
                  }
                  easy->setSwitch(Cmd.LIGHTING2.cmnd, getLightingId(), Cmd.LIGHTING2.unitcode);    // turn on device 0
+                 //easy->SetTransmitBuffer( lbuffer,Cmd.LIGHTING2.cmnd,getLightingId(), Cmd.LIGHTING2.unitcode);
+                 //easy->transmitRawBuffer(lbuffer,5);
+                 
+
 #endif
                     Cmd.LIGHTING2.subtype = 1;
                 }
@@ -632,29 +664,13 @@ void ManageDomoticCmdEmission() {
                 for (byte ii = 0 ; ii<NbPulse;ii++){
                     Serial.print(Cmd.Word[ii]) ;
                     Serial.print(" ");
-                    Serial.print(Cmd.Word[ii],16) ;
-                    Serial.print(" ");
-                }
-//                for (byte ii = 0 ; ii<10;ii++){
-//                    Serial.print(pulses[ii]) ;
+//                    Serial.print(Cmd.Word[ii],16) ;
 //                    Serial.print(" ");
-//                }
+                }
                 Serial.println();
             }
 ///---------------
-
-            //-------------
-            easy-> initPin();
-            while  ( Nbrepeat )
-            {
-                Nbrepeat--;
-//                easy->transmitRaw(Cmd.Word,NbPulse);
-                easy->transmitRaw(pulses,NbPulse);
-                 delay(10);
-            }
-            easy-> deactivatePin();
-
-
+            easy->transmitRawBuffer(Cmd.Word,Nbrepeat);
         }
         else
                 Cmd.LIGHTING2.subtype = 3;
