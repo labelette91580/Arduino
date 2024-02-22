@@ -55,13 +55,13 @@
     <ClCompile Include="reportSerial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="bitstream.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DecodePwm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DecodeRain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bitstream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

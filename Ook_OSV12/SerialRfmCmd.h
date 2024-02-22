@@ -1,5 +1,63 @@
     #define HEXTODEC(AH) AH = AH-'0'; if (AH>9) AH = AH -( 7 );if (AH>15) AH = AH - 0x20 ;
 
+#define CMD_LIST const char* cmd[]="drwiaxtsma"
+
+byte readByte()
+{
+    byte vByte=0;
+    char Ah;
+           while (Serial.available() ==0 ); 
+           Ah  = Serial.read();
+           if (Ah == ' ') {
+            while (Serial.available() ==0 ); 
+            Ah  = Serial.read();
+           }
+
+           if (Ah == 'n') 
+           {
+                //numerique decimale
+               while (Serial.available() ==0 );
+               Ah  = Serial.read();
+               do{
+                   vByte = vByte * 10  ;
+                   vByte += Ah -'0';
+                   while (Serial.available() ==0 );
+                   Ah  = Serial.read();
+
+               }while (Ah!=' ');
+           }
+           else
+           if (Ah == 'b') 
+           {
+            //bin
+               while (Serial.available() ==0 );
+               Ah  = Serial.read();
+               do{
+                   vByte = vByte << 1 ;
+                   vByte += Ah -'0';
+                   while (Serial.available() ==0 );
+                   Ah  = Serial.read();
+
+               }while (Ah!=' ');
+           }
+           else
+           {
+                //hexa
+               while (Serial.available() ==0 );
+               char Al  = Serial.read();
+               HEXTODEC(Ah);
+               HEXTODEC(Al);
+               vByte = Ah*16+ Al ; 
+           }
+
+           return vByte ;
+}
+
+void printReg(byte addr)
+{
+    byte regVal = radio.readReg(addr);
+    radio.PrintReg( addr , regVal);    
+}
 void readKbdCmd()
 {
     byte input;
@@ -7,53 +65,57 @@ void readKbdCmd()
     {
          input = Serial.read();
         if (input == 'd') //d=dump all register values
-          radio.readAllRegs();
-
+        {
+            radio.readAllRegs();
+        }
         if (input == 'r') // RXX read register number xx 
         {
-           while (Serial.available() ==0 );
-           char Ah  = Serial.read();
-           while (Serial.available() ==0 );
-           char Al  = Serial.read();
-           HEXTODEC(Ah);
-           HEXTODEC(Al);
-           byte addr = Ah*16+ Al ; 
-           Serial.print(" Read :");Serial.println(addr,HEX);
-           byte regVal = radio.readReg(addr);
-           radio.PrintReg( addr , regVal);    
+           byte addr = readByte();
+           Serial.print(" Read :");
+           printReg( addr);
+        }
+        if (input == 'R') // RXX read register number xx 
+        {
+           byte addr = readByte();
+           Serial.print(" Read :");
+           printReg( addr);
+           addr++;
+           Serial.print(" Read :");
+           printReg( addr);
         }
         if (input == 'w') // WAAVVwrite register number xx 
         {
-           while (Serial.available() ==0 );
-           char Ah  = Serial.read();
-           while (Serial.available() ==0 );
-           char Al  = Serial.read();
-           HEXTODEC(Ah);
-           HEXTODEC(Al);
-           byte addr = Ah*16+ Al ; 
-
-           while (Serial.available() ==0 );
-           char Vh  = Serial.read();
-           while (Serial.available() ==0 );
-           char Vl  = Serial.read();
-           HEXTODEC(Vh);
-           HEXTODEC(Vl);
-           byte val  = Vh*16+ Vl ; 
-       
+           byte addr = readByte();
+           byte val  = readByte();
        
            Serial.print(" Write Adr:");Serial.print(addr,HEX);
            Serial.print("=");       Serial.println(val,HEX);
            radio.writeReg(addr, val) ;
-           byte regVal = radio.readReg(addr);
-           radio.PrintReg( addr , regVal);    
+           printReg( addr);
         }
-    
+
+        if (input == 'W') // WAAVVVV write register number xx 
+        {
+           byte addr = readByte();
+           byte val1  = readByte();
+           byte val2  = readByte();
+       
+           Serial.print(" Write Adr:");Serial.print(addr,HEX);
+           Serial.print("=")          ;Serial.println(val1,HEX);
+           radio.writeReg(addr, val1) ;
+           printReg( addr);
+
+           addr++;
+           Serial.print(" Write Adr:");Serial.print(addr,HEX);
+           Serial.print("=")          ;Serial.println(val2,HEX);
+           radio.writeReg(addr, val2) ;
+           printReg( addr);
+        }
 
         if (input == 'i')
         {
           Serial.print(" [RX_RSSI:");Serial.print(radio.readRSSI());Serial.println("]");
         }
-
         if (input == 'a')
         {
           attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
@@ -83,13 +145,17 @@ void readKbdCmd()
             easy->setSwitch(false,55,1);    // turn on device 0
             Serial.println("Sent");
           }
-        if (input == 'M')
+        if (input == 'm')
           {
             easy->setSwitch(true,55,1);    // turn on device 0
           }
-        if (input == 'A')
+        if (input == 'a')
           {
             easy->setSwitch(false,55,1);    // turn on device 0
+          }
+        if (input == 'p')//dump pulse serial
+          {
+            if (dumpPulse==0) dumpPulse=1;else dumpPulse=0;
           }
     }
 }
