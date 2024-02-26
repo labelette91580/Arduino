@@ -743,14 +743,14 @@ void testOOK (TPulses* TestPulse, float coefA=1.0 , float coefB=0   )
 }
 
 
-void testOOK (TStringVector* TestPulse, float coefA=1.0 , float coefB=0   )
+void testOOK (TStringVector* TestPulse, float coefA=1.0 , float coefB=0  , char* decoders =  "OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;" )
 {
     long PulseNb=0;
 
 //OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;
     setReportType(SERIAL_DEBUG);
 //    Setup ( 1, 2, 3, "HOMEEASY;"  );
-    Setup ( 1, 2, 3, "OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;"  );
+    Setup ( 1, 2, 3, decoders  );
 
 	for(;;)
 	{
@@ -765,9 +765,12 @@ void testOOK (TStringVector* TestPulse, float coefA=1.0 , float coefB=0   )
             if(pulse!=0)
                 pulse = pulse * coefA + coefB ;
             else{
+                if ((*TestPulse)[PulseNb].c_str()[0] != 0xd )
+                {
                 Serial.print("-->");
                 Serial.print((*TestPulse)[PulseNb].c_str());
                 Serial.println();
+                }
             }
             fifo.put(pulse);
             PulseNb++;
@@ -793,7 +796,7 @@ int main(int, char**)
 {
 
     
-    FILE* f = fopen("d.txt","rb");
+    FILE* f = fopen("d1.txt","rb");
     fseek(f, 0, SEEK_END); // seek to end of file
     long size = ftell(f); // get current file pointer
     fseek(f, 0, SEEK_SET); // seek back to beginning of file
@@ -802,7 +805,8 @@ int main(int, char**)
     fclose(f);
     SplitString ( fileContent , ",\n" , "" , true , TestPulseStr );
 
-    testOOK (&TestPulseStr  ) ;
+    //testOOK (&TestPulseStr  , 1.0,0.,("OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;") ) ;
+    testOOK (&TestPulseStr  , 1.0,0.,("RAIN;") ) ;
 
 
     testOOK (&HomePulsec  ) ;

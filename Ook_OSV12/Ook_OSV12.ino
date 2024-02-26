@@ -294,7 +294,8 @@ void ext_int_1(void) {
         //tranistion 1--0 : etat pulse = 1 : bit 0 = 1
         pulse |= 1 ;
 
-    fifo.put(pulse);
+    if(pulse>130)
+        fifo.put(pulse);
 }
 
 #ifdef RFM69_ENABLE
@@ -600,6 +601,14 @@ void ManageDomoticCmdEmission() {
     }
     else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdRESET) ) {  
     }
+    else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdSETMODE) ) {  
+
+        if (Cmd.IRESPONSE.UNDECODEDenabled )
+            setReportType(getReportType() | REPORT_SERIAL);
+        else
+            setReportType(getReportType() & ~REPORT_SERIAL);
+        
+    }
     else
     {
         detachInterrupt(digitalPinToInterrupt(PDATA));
@@ -707,6 +716,9 @@ void Loop ( word p) {
     ManagePulseReception ( p);
     //read serial input & fill receive buffe(
     ReadDomoticCmdFromSerial();
+#ifdef RFM69_ENABLE
+    //readKbdCmd();
+#endif
     ManageDomoticCmdEmission();
 }
 
