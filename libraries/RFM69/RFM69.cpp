@@ -77,7 +77,7 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
     ///* 0x19 */ { REG_RXBW, RF_RXBW_DCCFREQ_010 | RF_RXBW_MANT_24 | RF_RXBW_EXP_7 }, //  = 1,3 Khz (BitRate < 2 * RxBw)
     /* 0x1a */
     /* 0x1b */ { REG_OOKPEAK , RF_OOKPEAK_THRESHTYPE_PEAK }, /* peak mode */
-    /* 0x1d */ { REG_OOKFIX  , 70  },                        /* not used in peak mode : used for fixed mode*/
+    /* 0x1d */ { REG_OOKFIX  , 0x10  },                        /* not used in peak mode : used for fixed mode*/
 
     
     /* 0x25 */ { REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00 }, 
@@ -165,8 +165,6 @@ void RFM69::setMode(byte newMode)
 	while ( ((readReg(REG_IRQFLAGS1) & RF_IRQFLAGS1_MODEREADY) == 0x00) && (i--!=0) )
 	{
 	}; // Wait for ModeReady
-//	Serial.print("READY:");
-//	Serial.println(MAX_WAIT-i);
 
 	_mode = newMode;
 }
@@ -244,11 +242,9 @@ bool RFM69::sendWithRetry(byte toAddress, const void* buffer, byte bufferSize, b
     {
       if (ACKReceived(toAddress))
       {
-        //Serial.print(" ~ms:");Serial.print(millis()-sentTime);
         return true;
       }
     }
-    //Serial.print(" RETRY#");Serial.println(i+1);
   }
   return false;
 }
@@ -506,7 +502,6 @@ void RFM69::PrintReg(byte regAddr , byte regVal){
     	Serial.print("0");
     Serial.print(regVal,HEX);
     Serial.print(" - ");
-    //Serial.println(regVal,BIN);
     for (i=7;i>=0;i--){
       if ( regVal & (1<<i) ) 
     		Serial.print("1");
