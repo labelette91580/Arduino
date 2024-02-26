@@ -97,9 +97,9 @@ void ReadDomoticCmdFromSerial()
                 receiveLength = 0 ;
         }
         lastTime = millis();
-				if (receiveLength >= sizeof(Cmd)) {
-					receiveLength = 0;
-				}
+		if (receiveLength >= sizeof(Cmd)) {
+			receiveLength = 0;
+		}
         Cmd.Buffer[receiveLength++]=b;
 
 		//if packet len not valid , wait valid
@@ -327,10 +327,10 @@ void DomoticStartReceive()
   Send.IRESPONSE.cmnd    = cmdStartRec ;
   Send.IRESPONSE.msg1 ='C';
   Send.IRESPONSE.msg2 ='o';
-  Send.IRESPONSE.msg3 ='p';
-  Send.IRESPONSE.msg4 ='y';
-  Send.IRESPONSE.msg5 ='r';
-  Send.IRESPONSE.msg6 ='i';
+  Send.ICMND    .msg3 ='p';
+  Send.ICMND    .msg4 ='y';
+  Send.ICMND    .msg5 ='r';
+  Send.ICMND    .msg6 ='i';
   Send.IRESPONSE.msg7 ='g';
   Send.IRESPONSE.msg8 ='h';
   Send.IRESPONSE.msg9 ='t';
@@ -352,11 +352,16 @@ void DomoticStatus()
   Send.IRESPONSE.cmnd    = cmdSTATUS ;
   Send.IRESPONSE.msg1    = trxType43392 ;
   Send.IRESPONSE.msg2    = VERSION  ;    //Firmware version
-  Send.IRESPONSE.msg3    = 0  ;
-  Send.IRESPONSE.msg4    = 0  ;
-  Send.IRESPONSE.msg5    = 0  ;
-  Send.IRESPONSE.msg6    = 1  ;    //Hardware version
+  Send.ICMND    .msg3    = 0  ;
+  Send.ICMND    .msg4    = 0  ;
+  Send.ICMND    .msg5    = 0  ;
+  Send.ICMND    .msg6    = 1  ;    //Hardware version
   Send.IRESPONSE.msg7    = 0  ;    //Hardware version
+  Send.IRESPONSE.RUBICSONenabled=1;
+  Send.IRESPONSE.OREGONenabled=1;
+  Send.IRESPONSE.HIDEKIenabled=1;
+  Send.IRESPONSE.msg10    = FWtypeProXL1  ;    //Firmware type
+
 		
 	
   Serial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
@@ -436,6 +441,9 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
 
     if (isReportSerial())
     {
+        extern byte dumpPulse;
+        if (dumpPulse) Serial.println();
+
         printTab(TAB,Serial.print("HEASY")) ;
         reportPrintHeader();
 

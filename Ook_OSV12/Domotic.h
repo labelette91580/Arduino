@@ -68,29 +68,112 @@ struct {
 		byte	msg8;
 		byte	msg9;
 	} ICMND;
+
+
 struct {	//response on a mode command from the application
-		byte	packetlength; //= 20
-		byte	packettype;
-		byte	subtype;
-		byte	seqnbr;
-		byte	cmnd;
-		byte	msg1;	//receiver/transceiver type   #define trxType43392 0x53
-		byte	msg2;	//firmware version
-		byte	msg3;
-		byte	msg4;
-		byte	msg5;
-		byte	msg6;
-		byte	msg7;
-		byte	msg8;
-		byte	msg9;
-		byte	msg10;
-    byte	msg11;
-    byte	msg12;
-    byte	msg13;
-    byte	msg14;
-    byte	msg15;
-    byte	msg16;
+		BYTE	packetlength;
+		BYTE	packettype;
+		BYTE	subtype;
+		BYTE	seqnbr;
+		BYTE	cmnd;
+		BYTE	msg1;	//receiver/transceiver type
+		BYTE	msg2;	//firmware version
+
+#ifdef IS_BIG_ENDIAN
+		//BYTE	msg3;
+		BYTE	UNDECODEDenabled : 1;
+		BYTE	IMAGINTRONIXenabled : 1;
+		BYTE	SXenabled : 1;
+		BYTE	RSLenabled : 1;
+		BYTE	LIGHTING4enabled : 1;
+		BYTE	FINEOFFSETenabled : 1;
+		BYTE	RUBICSONenabled : 1;
+		BYTE	AEenabled : 1;
+
+		//BYTE	msg4;
+		BYTE	BLINDST1enabled : 1;
+		BYTE	BLINDST0enabled : 1;
+		BYTE	MSG4Reserved5 : 1;
+		BYTE	LEGRANDenabled : 1;
+		BYTE	LACROSSEenabled : 1;
+		BYTE	HIDEKIenabled : 1;
+		BYTE	LWRFenabled : 1;
+		BYTE	MERTIKenabled : 1;
+
+		//BYTE	msg5;
+		BYTE	VISONICenabled : 1;
+		BYTE	ATIenabled : 1;
+		BYTE	OREGONenabled : 1;
+		BYTE	MEIANTECHenabled : 1;
+		BYTE	HEEUenabled : 1;
+		BYTE	ACenabled : 1;
+		BYTE	ARCenabled : 1;
+		BYTE	X10enabled : 1; //note: keep this order
+
+		//BYTE    msg6;
+        BYTE    MSG6Reserved7 : 1;
+        BYTE    MSG6Reserved6 : 1;
+        BYTE    MSG6Reserved5 : 1;
+        BYTE    MSG6Reserved4 : 1;
+        BYTE    MSG6Reserved3 : 1;
+        BYTE    MSG6Reserved2 : 1;
+		BYTE    HCEnabled : 1;
+        BYTE    KEELOQenabled : 1;
+#else
+		//BYTE	msg3;
+		BYTE	AEenabled : 1;
+		BYTE	RUBICSONenabled : 1;
+		BYTE	FINEOFFSETenabled : 1;
+		BYTE	LIGHTING4enabled : 1;
+		BYTE	RSLenabled : 1;
+		BYTE	SXenabled : 1;
+		BYTE	IMAGINTRONIXenabled : 1;
+		BYTE	UNDECODEDenabled : 1;
+
+		//BYTE	msg4;
+		BYTE	MERTIKenabled : 1;
+		BYTE	LWRFenabled : 1;
+		BYTE	HIDEKIenabled : 1;
+		BYTE	LACROSSEenabled : 1;
+		BYTE	LEGRANDenabled : 1;
+		BYTE	MSG4Reserved5 : 1;
+		BYTE	BLINDST0enabled : 1;
+		BYTE	BLINDST1enabled : 1;
+
+		//BYTE	msg5;
+		BYTE	X10enabled : 1; //note: keep this order
+		BYTE	ARCenabled : 1;
+		BYTE	ACenabled : 1;
+		BYTE	HEEUenabled : 1;
+		BYTE	MEIANTECHenabled : 1;
+		BYTE	OREGONenabled : 1;
+		BYTE	ATIenabled : 1;
+		BYTE	VISONICenabled : 1;
+
+        //BYTE	msg6;
+        BYTE    KEELOQenabled : 1;
+		BYTE    HCEnabled : 1;
+        BYTE    DDenabled : 1;
+        BYTE    MSG6Reserved3 : 1;
+        BYTE    MSG6Reserved4 : 1;
+        BYTE    MSG6Reserved5 : 1;
+        BYTE    MSG6Reserved6 : 1;
+        BYTE    MSG6Reserved7 : 1;
+#endif
+
+		BYTE	msg7;	//major version
+		BYTE	msg8;	//minor version
+		BYTE	msg9;	//RF power
+		BYTE	msg10;	//FW type
+        BYTE	msg11;	//noise level
+        BYTE	msg12;
+        BYTE	msg13;
+        BYTE	msg14;
+        BYTE	msg15;
+        BYTE	msg16;
 	} IRESPONSE;
+
+
 struct {
 		byte	packetlength;
 		byte	packettype;
@@ -288,6 +371,108 @@ struct  T_LIGHTING2{
 //		byte	data[2] ;
 		
 	} LIGHTING2;
+struct {	//response on a mode command from the application
+		BYTE	packetlength;
+		BYTE	packettype;
+		BYTE	subtype;
+		BYTE	seqnbr;
+		BYTE	cmnd;
+		BYTE	msg1;	//receiver/transceiver type
+		BYTE	msg2;	//firmware version
+
+#ifdef IS_BIG_ENDIAN
+		//BYTE	msg3;
+		BYTE	UNDECODEDenabled : 1;
+		BYTE	IMAGINTRONIXenabled : 1;
+		BYTE	SXenabled : 1;
+		BYTE	RSLenabled : 1;
+		BYTE	LIGHTING4enabled : 1;
+		BYTE	FINEOFFSETenabled : 1;
+		BYTE	RUBICSONenabled : 1;
+		BYTE	AEenabled : 1;
+
+		//BYTE	msg4;
+		BYTE	BLINDST1enabled : 1;
+		BYTE	BLINDST0enabled : 1;
+		BYTE	MSG4Reserved5 : 1;
+		BYTE	LEGRANDenabled : 1;
+		BYTE	LACROSSEenabled : 1;
+		BYTE	HIDEKIenabled : 1;
+		BYTE	LWRFenabled : 1;
+		BYTE	MERTIKenabled : 1;
+
+		//BYTE	msg5;
+		BYTE	VISONICenabled : 1;
+		BYTE	ATIenabled : 1;
+		BYTE	OREGONenabled : 1;
+		BYTE	MEIANTECHenabled : 1;
+		BYTE	HEEUenabled : 1;
+		BYTE	ACenabled : 1;
+		BYTE	ARCenabled : 1;
+		BYTE	X10enabled : 1; //note: keep this order
+
+		//BYTE    msg6;
+        BYTE    MSG6Reserved7 : 1;
+        BYTE    MSG6Reserved6 : 1;
+        BYTE    MSG6Reserved5 : 1;
+        BYTE    MSG6Reserved4 : 1;
+        BYTE    MSG6Reserved3 : 1;
+        BYTE    MSG6Reserved2 : 1;
+		BYTE    HCEnabled : 1;
+        BYTE    KEELOQenabled : 1;
+#else
+		//BYTE	msg3;
+		BYTE	AEenabled : 1;
+		BYTE	RUBICSONenabled : 1;
+		BYTE	FINEOFFSETenabled : 1;
+		BYTE	LIGHTING4enabled : 1;
+		BYTE	RSLenabled : 1;
+		BYTE	SXenabled : 1;
+		BYTE	IMAGINTRONIXenabled : 1;
+		BYTE	UNDECODEDenabled : 1;
+
+		//BYTE	msg4;
+		BYTE	MERTIKenabled : 1;
+		BYTE	LWRFenabled : 1;
+		BYTE	HIDEKIenabled : 1;
+		BYTE	LACROSSEenabled : 1;
+		BYTE	LEGRANDenabled : 1;
+		BYTE	MSG4Reserved5 : 1;
+		BYTE	BLINDST0enabled : 1;
+		BYTE	BLINDST1enabled : 1;
+
+		//BYTE	msg5;
+		BYTE	X10enabled : 1; //note: keep this order
+		BYTE	ARCenabled : 1;
+		BYTE	ACenabled : 1;
+		BYTE	HEEUenabled : 1;
+		BYTE	MEIANTECHenabled : 1;
+		BYTE	OREGONenabled : 1;
+		BYTE	ATIenabled : 1;
+		BYTE	VISONICenabled : 1;
+
+        //BYTE	msg6;
+        BYTE    KEELOQenabled : 1;
+		BYTE    HCEnabled : 1;
+        BYTE    DDenabled : 1;
+        BYTE    MSG6Reserved3 : 1;
+        BYTE    MSG6Reserved4 : 1;
+        BYTE    MSG6Reserved5 : 1;
+        BYTE    MSG6Reserved6 : 1;
+        BYTE    MSG6Reserved7 : 1;
+#endif
+
+		BYTE	msg7;	//major version
+		BYTE	msg8;	//minor version
+		BYTE	msg9;	//RF power
+		BYTE	msg10;	//FW type
+        BYTE	msg11;	//noise level
+        BYTE	msg12;
+        BYTE	msg13;
+        BYTE	msg14;
+        BYTE	msg15;
+        BYTE	msg16;
+	} IRESPONSE;
 
 struct {
 		byte	packetlength; // = 13
@@ -342,6 +527,22 @@ word Word  [1] ; //for reception by char
 #define sTypeInterfaceResponse 0x00
 
 #define trxType43392 0x53
+
+#define FWtyperec 0x0
+#define FWtype1 0x1
+#define FWtype2 0x2
+#define FWtypeExt 0x3
+#define FWtypeExt2 0x4
+#define FWtypePro1 0x5
+#define FWtypePro2 0x6
+#define FWtypeProXL1 0x10
+#define FWtypeProXL2 0x13
+#define FWtypeRFX433 0x14 //RFM69 433 firmware
+#define FWtypeRFX868 0x15 //RFM69 868 firmware
+#define FWtypeProXL95 0x16 //RFM95 firmware
+#define FWtypeRFX433XXL 0x17 //RFU
+#define FWtypeRFX310 0x18 //RFXusb with 310MHz receiver module
+
 
 #define pTypeLighting2 0x11
 #define sTypeAC 0x0
