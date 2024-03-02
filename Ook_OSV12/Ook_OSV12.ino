@@ -76,6 +76,7 @@ byte        PulsePinData;
 word        Seconds;
 word        lastSeconds;
 word        lastMinute ;
+word        lastHour   ;
 
 
 #ifdef RFM69_ENABLE
@@ -370,6 +371,8 @@ RadioInit();
 
 easy = new HomeEasyTransmitter (txPin,ledPin);
 
+HagerSetPin(txPin,  pLed );
+
 delay(100);
 if (isReportSerial() )
 {
@@ -513,7 +516,14 @@ void ManagePulseReception ( word p) {
 					reportDomoticRfxCount(2,NbDecodedPackets);
 			    NbPulsePerMin = 0;
 				
-
+                //every hours
+/*
+                if((lastMinute/60)!= lastHour)
+                {
+                    lastHour = lastMinute/60 ;
+                    DomoticSaveToEEP();
+                }
+*/
             }
 
             while ( (Decoder=Decoders[i++]) != 0 )

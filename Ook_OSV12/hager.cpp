@@ -1,12 +1,13 @@
 #include "Arduino.h"
 #include <avr/pgmspace.h>
+#include "hager.h"
 
 //#include <timer.h>
 
 
 #define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);
 
-extern byte  Header[];
+extern const byte  Header[];
 
 //comand 
 /*
@@ -48,10 +49,16 @@ byte HagerChk ;
 byte HagerCmd[8];
 byte IdCmd;
 
-#define pData   3
-#define pLedPin 9 //pin for data input/output
+byte pData =  3;
+byte pLedPin = 9 ;//pin for data input/output
 #define HAGER_DELAY 210
 
+
+void HagerSetPin(byte pdata, byte pledpin )
+{
+	pData = pdata;
+	pLedPin = pledpin;
+}
 //0 to 1 transition
 //send 1
 void HagerSendHigh()
@@ -83,7 +90,7 @@ void HagerSendByte(byte  bite )
 {
 	HagerCmd[IdCmd++]=bite;
 	HagerChk += bite;
-	for (char i=7;i>=0;i--)
+	for (signed char i=7;i>=0;i--)
 	{
 		HagerSendBit ( bite & ( (byte)1 << i ) );
 	}
@@ -98,7 +105,7 @@ void HagerSendBytes(byte  * bite , byte nb )
 }
 
 //send Pulse = array duration in 10 micros
-void HagerSendOne(byte * Pulse  )
+void HagerSendOne1(const byte * Pulse  )
 {
   byte i=0;
   word delay;
@@ -116,6 +123,39 @@ void HagerSendOne(byte * Pulse  )
     DelayMicroseconds(delay)  ;
     i++;
   }
+  digitalWrite(pData, LOW);
+
+  if (pLedPin) digitalWrite(pLedPin, LOW);
+}
+
+
+void HagerSendHeaderBit(byte  delay , byte number )
+{
+  byte i=0;
+  for (i=0;i<number;i++)
+  {
+    if (i%2==0) 
+      //output = 1 
+      digitalWrite(pData, HIGH);
+    else
+      //output = 0
+      digitalWrite(pData, LOW);
+    DelayMicroseconds(delay)  ;
+  }
+
+}
+void HagerSendOne(const byte * Pulse  )
+{
+  byte i=0;
+  word delay;
+  if (pLedPin) digitalWrite(pLedPin, HIGH);
+
+  HagerSendHeaderBit(  220  , 32  );
+  HagerSendHeaderBit(  630  , 2   );
+  HagerSendHeaderBit(  220  , 2   );
+  HagerSendHeaderBit(  630  , 2   );
+  HagerSendHeaderBit(  220  , 2   );
+
   digitalWrite(pData, LOW);
 
   if (pLedPin) digitalWrite(pLedPin, LOW);
@@ -141,7 +181,7 @@ void HagerSend ( byte * addr , byte cmnd )
   noInterrupts() ;
   HagerChk=0;
   IdCmd=0;
-  HagerSendOne(Header );
+  HagerSendOne1(Header );
   HagerSendBytes(addr , 5  ) ;
   if (cmnd==CMD_ECO)
 		HagerSendBytes(Z1eco , 2  ) ;
