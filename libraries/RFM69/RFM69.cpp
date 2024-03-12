@@ -77,7 +77,7 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
     ///* 0x19 */ { REG_RXBW, RF_RXBW_DCCFREQ_010 | RF_RXBW_MANT_24 | RF_RXBW_EXP_7 }, //  = 1,3 Khz (BitRate < 2 * RxBw)
     /* 0x1a */
     /* 0x1b */ { REG_OOKPEAK , RF_OOKPEAK_THRESHTYPE_PEAK }, /* peak mode */
-    /* 0x1d */ { REG_OOKFIX  , 0x10  },                        /* not used in peak mode : used for fixed mode*/
+    /* 0x1d */ { REG_OOKFIX  , 0x20  },                        /* not used in peak mode : used for fixed mode*/
 
     
     /* 0x25 */ { REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00 }, 
@@ -445,13 +445,17 @@ void  RFM69::writeReg(byte addr, byte value)
 void RFM69::select() {
   noInterrupts();
   //save current SPI settings
- #ifndef ESP8266
+ #if !defined(ESP8266)  && !defined(ARDUINO_PICO_MAJOR )
   _SPCR = SPCR;
   _SPSR = SPSR;
 #endif
   //set RFM69 SPI settings
   SPI.setDataMode(SPI_MODE0);
   SPI.setBitOrder(MSBFIRST);
+#ifndef SPI_CLOCK_DIV4
+    #define SPI_CLOCK_DIV4 0
+   #pragma message "setting SPI_CLOCK_DIV4=0 "
+#endif
   SPI.setClockDivider(SPI_CLOCK_DIV4); //decided to slow down from DIV2 after SPI stalling in some instances, especially visible on mega1284p when RFM69 and FLASH chip both present
   digitalWrite(_slaveSelectPin, LOW);
 }
@@ -460,7 +464,7 @@ void RFM69::select() {
 void RFM69::unselect() {
   digitalWrite(_slaveSelectPin, HIGH);
   //restore SPI settings to what they were before talking to RFM69
-#ifndef ESP8266
+ #if !defined(ESP8266)  && !defined(ARDUINO_PICO_MAJOR )
   SPCR = _SPCR;
   SPSR = _SPSR;
 #endif
