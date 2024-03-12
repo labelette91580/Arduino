@@ -4,6 +4,10 @@
 
 #include "Arduino.h"
 #include "Domotic.h"
+#include <EEPROM.h>
+#ifdef ESP8266
+#include <esp.h>
+#endif
 
 #include "Oregon.h"
 #include "types.h"
@@ -75,6 +79,38 @@ LastZoneValue[3];
 Seqnbr=0;
 DomoticPacketReceived = false;
 
+//wdt_disable()  ;
+
+ //restaure last Total power from eeprom
+#ifdef ESP8266
+//declare eeprom flash eeprom emulation size
+EEPROM.begin(8);
+#endif
+EEPROM.get(0,ToTalPowerWHeure);
+if (isReportSerial())
+{
+    Serial.print(" TotalPower:"); Serial.println(ToTalPowerWHeure); 
+}
+if(ToTalPowerWHeure==0xFFFFFFFF){
+    ToTalPowerWHeure=0;
+    DomoticSaveToEEP();
+}
+
+}
+
+void DomoticSaveToEEP()
+{
+    EEPROM.put(0,ToTalPowerWHeure);
+    if (isReportSerial())
+    {
+        Serial.print("save TotalPower:"); Serial.println(ToTalPowerWHeure); 
+    }
+#ifdef ESP8266
+    //flush ram to flash with interrupts deactivated
+    noInterrupts();
+    EEPROM.commit();
+    interrupts();
+#endif
 }
 
 /// return true if packet en cours de reception
@@ -222,7 +258,7 @@ void reportDomoticPower(const char* Name, byte* data, int size ) {
     if(isReportDomotic())
     {
         tint.Int = getPower(data);
-        tlong.Long = ToTalPowerWHeure ;
+        tlong.Long = (long)(ToTalPowerWHeure*223.666 ) ;
 
         Send.ENERGY.packetlength = sizeof(Send.ENERGY) - 1;
         Send.ENERGY.packettype = pTypeENERGY;

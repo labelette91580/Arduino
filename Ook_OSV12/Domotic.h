@@ -647,6 +647,7 @@ bool DomoticReceptionInProgress();
 extern void ReadDomoticCmdFromSerial();
 extern unsigned long getLightingId ();
 extern void  DomoticInit();
+void DomoticSaveToEEP();
 extern void reportDomoticTemp ( const char* Name,int temp , byte id1 , byte id2 , byte bateryLevel,  byte* data=0, byte pos = 0);
 extern void reportDomoticTempHum ( const char* Name, int temp , byte hum , byte id1 , byte id2, byte bateryLevel, byte subType,  byte* data=0, byte pos = 0);
 void reportDomoticPower(const char* Name,byte* data, int size);

@@ -17,6 +17,7 @@ extern void setup();
 extern void loop();
 
 Print Serial;
+CEEPROM EEPROM;
 
 //--------------------------------------------------------------------
 // Timers

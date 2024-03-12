@@ -77,7 +77,7 @@ word        Seconds;
 word        lastSeconds;
 word        lastMinute ;
 word        lastHour   ;
-
+word        lastDay   ;
 
 #ifdef RFM69_ENABLE
 #include <RFM69.h>
@@ -363,8 +363,6 @@ createDecoderList(pDecoderList);
 RadioInit();
 #endif     
 
-        DomoticInit();
-
 #ifdef BMP180_ENABLE
         bmp180_init();
 #endif
@@ -384,10 +382,13 @@ if (isReportSerial() )
 #ifdef ESP8266
      Serial.print(Serial.getRxBufferSize());
 #else
-     Serial.print(SERIAL_RX_BUFFER_SIZE);
+//     Serial.print(SERIAL_RX_BUFFER_SIZE);
 #endif
 }
-    registerStdout();
+
+DomoticInit();
+
+registerStdout();
 
 }
 
@@ -517,13 +518,20 @@ void ManagePulseReception ( word p) {
 			    NbPulsePerMin = 0;
 				
                 //every hours
-/*
                 if((lastMinute/60)!= lastHour)
                 {
                     lastHour = lastMinute/60 ;
-                    DomoticSaveToEEP();
+
+                    if((lastHour/24)!= lastDay)
+                    {
+                        lastDay = lastHour/24 ;
+                        DomoticSaveToEEP();
+                    }
+
+
+
                 }
-*/
+
             }
 
             while ( (Decoder=Decoders[i++]) != 0 )

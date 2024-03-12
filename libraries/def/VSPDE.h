@@ -98,4 +98,25 @@ char* decoupecsv(char* ligne, char* mot, int MotLen, char* sep);
 
 void Split ( char * ptligne , char * separateur , char * concatenator , bool AllowDuplicateSeparator , std::string list[] );
 
+class CEEPROM{
+public:
+	void get(int,int)
+	{
+	}
+	void put (int,int)
+	{
+	}
+	void begin (int)
+	{
+	}
+	void commit ()
+	{
+	}
+
+	
+};
+
+extern CEEPROM EEPROM;
+
+#define wdt_disable()  
 #endif
