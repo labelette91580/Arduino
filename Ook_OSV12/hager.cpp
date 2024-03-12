@@ -129,7 +129,7 @@ void HagerSendOne1(const byte * Pulse  )
 }
 
 
-void HagerSendHeaderBit(byte  delay , byte number )
+void HagerSendHeaderBit(word  delay , byte number )
 {
   byte i=0;
   for (i=0;i<number;i++)
