@@ -45,6 +45,7 @@ volatile byte RFM69::ACK_REQUESTED;
 volatile byte RFM69::ACK_RECEIVED; /// Should be polled immediately after sending a packet with ACK request
 volatile int RFM69::RSSI; //most accurate RSSI during reception (closest to the reception)
 RFM69* RFM69::selfPointer;
+#define DbgSerial Serial
 
 bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
 {
@@ -77,7 +78,7 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
     ///* 0x19 */ { REG_RXBW, RF_RXBW_DCCFREQ_010 | RF_RXBW_MANT_24 | RF_RXBW_EXP_7 }, //  = 1,3 Khz (BitRate < 2 * RxBw)
     /* 0x1a */
     /* 0x1b */ { REG_OOKPEAK , RF_OOKPEAK_THRESHTYPE_PEAK }, /* peak mode */
-    /* 0x1d */ { REG_OOKFIX  , 0x20  },                        /* not used in peak mode : used for fixed mode*/
+    /* 0x1d */ { REG_OOKFIX  , 0x10  },                        /* not used in peak mode : used for fixed mode*/
 
     
     /* 0x25 */ { REG_DIOMAPPING1, RF_DIOMAPPING1_DIO0_00 }, 
@@ -500,21 +501,21 @@ void RFM69::setCS(byte newSPISlaveSelect) {
 //for debugging
 void RFM69::PrintReg(byte regAddr , byte regVal){
 	int i;
-    Serial.print(regAddr, HEX);
-    Serial.print(" - ");
+    DbgSerial.print(regAddr, HEX);
+    DbgSerial.print(" - ");
 		if (regVal<16)
-    	Serial.print("0");
-    Serial.print(regVal,HEX);
-    Serial.print(" - ");
+    	DbgSerial.print("0");
+    DbgSerial.print(regVal,HEX);
+    DbgSerial.print(" - ");
     for (i=7;i>=0;i--){
       if ( regVal & (1<<i) ) 
-    		Serial.print("1");
+    		DbgSerial.print("1");
     	else
-    		Serial.print("0");
+    		DbgSerial.print("0");
     }
-    Serial.print(" - ");
-    Serial.print(regVal,DEC);
-    Serial.println(" ");
+    DbgSerial.print(" - ");
+    DbgSerial.print(regVal,DEC);
+    DbgSerial.println(" ");
 	
 }
 
