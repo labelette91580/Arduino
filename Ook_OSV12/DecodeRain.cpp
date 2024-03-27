@@ -131,6 +131,8 @@ KKKK
         word rain    = data[6] ;
         rain <<=8;
         rain += rainlsb;
+        id2=0;
+        id3=1;
 
         byte battery_low   = getRaw08bValue((uint8_t*)data,24,1);
 //        byte transmitcnt   = getRaw08bValue((uint8_t*)data,28,4);
