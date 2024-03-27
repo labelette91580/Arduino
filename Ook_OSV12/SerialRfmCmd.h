@@ -71,16 +71,16 @@ void readKbdCmd()
         if (input == 'r') // RXX read register number xx 
         {
            byte addr = readByte();
-           Serial.print(" Read :");
+           DbgSerial.print(" Read :");
            printReg( addr);
         }
         if (input == 'R') // RXX read register number xx 
         {
            byte addr = readByte();
-           Serial.print(" Read :");
+           DbgSerial.print(" Read :");
            printReg( addr);
            addr++;
-           Serial.print(" Read :");
+           DbgSerial.print(" Read :");
            printReg( addr);
         }
         if (input == 'w') // WAAVVwrite register number xx 
@@ -88,8 +88,8 @@ void readKbdCmd()
            byte addr = readByte();
            byte val  = readByte();
        
-           Serial.print(" Write Adr:");Serial.print(addr,HEX);
-           Serial.print("=");       Serial.println(val,HEX);
+           DbgSerial.print(" Write Adr:");DbgSerial.print(addr,HEX);
+           DbgSerial.print("=");       DbgSerial.println(val,HEX);
            radio.writeReg(addr, val) ;
            printReg( addr);
         }
@@ -100,21 +100,21 @@ void readKbdCmd()
            byte val1  = readByte();
            byte val2  = readByte();
        
-           Serial.print(" Write Adr:");Serial.print(addr,HEX);
-           Serial.print("=")          ;Serial.println(val1,HEX);
+           DbgSerial.print(" Write Adr:");DbgSerial.print(addr,HEX);
+           DbgSerial.print("=")          ;DbgSerial.println(val1,HEX);
            radio.writeReg(addr, val1) ;
            printReg( addr);
 
            addr++;
-           Serial.print(" Write Adr:");Serial.print(addr,HEX);
-           Serial.print("=")          ;Serial.println(val2,HEX);
+           DbgSerial.print(" Write Adr:");DbgSerial.print(addr,HEX);
+           DbgSerial.print("=")          ;DbgSerial.println(val2,HEX);
            radio.writeReg(addr, val2) ;
            printReg( addr);
         }
 
         if (input == 'i')
         {
-          Serial.print(" [RX_RSSI:");Serial.print(radio.readRSSI());Serial.println("]");
+          DbgSerial.print(" [RX_RSSI:");DbgSerial.print(radio.readRSSI());DbgSerial.println("]");
         }
         if (input == 'a')
         {
@@ -132,18 +132,18 @@ void readKbdCmd()
         {
           byte temperature =  radio.readTemperature(-1); // -1 = user cal factor, adjust for correct ambient
           byte fTemp = 1.8 * temperature + 32; // 9/5=1.8
-          Serial.print( "Radio Temp is ");
-          Serial.print(temperature);
-          Serial.print("C, ");
-          Serial.print(fTemp); //converting to F loses some resolution, obvious when C is on edge between 2 values (ie 26C=78F, 27C=80F)
-          Serial.println('F');
+          DbgSerial.print( "Radio Temp is ");
+          DbgSerial.print(temperature);
+          DbgSerial.print("C, ");
+          DbgSerial.print(fTemp); //converting to F loses some resolution, obvious when C is on edge between 2 values (ie 26C=78F, 27C=80F)
+          DbgSerial.println('F');
         }
         if (input == 's')
           {
             easy->setSwitch(true,55,1);    // turn on device 0
             delay(3000);        // wait 3 sec
             easy->setSwitch(false,55,1);    // turn on device 0
-            Serial.println("Sent");
+            DbgSerial.println("Sent");
           }
         if (input == 'm')
           {

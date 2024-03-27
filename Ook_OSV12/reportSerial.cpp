@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <Arduino.h>
 #include  "reportSerial.h"
+#include "Config.h"
 
 void printRSSI();
 
@@ -78,14 +79,14 @@ void printBinary ( byte * data , byte pos, byte space  )
 		byte bt = data[i];
 		for (byte b = 0; b < 8; b++)
 		{
-            if ( (bl++%space) == 0 )Serial.print(' ');
+            if ( (bl++%space) == 0 )DbgSerial.print(' ');
 			if (bt & 0x80)
-				Serial.print('1');
+				DbgSerial.print('1');
 			else
-				Serial.print('0');
+				DbgSerial.print('0');
 			bt = bt << 1;
-			//if (b == 3) Serial.print(' ');
-			//if (b == 7) Serial.print(' ');
+			//if (b == 3) DbgSerial.print(' ');
+			//if (b == 7) DbgSerial.print(' ');
 		}
 	}
 }
@@ -94,16 +95,16 @@ void printBinary ( byte * data , byte pos, byte space  )
 void printHexaByte ( byte data )
 {
 
-    Serial.print(DectoHex( data >> 4   ));
-    Serial.print(DectoHex( data  & 0x0F));
+    DbgSerial.print(DectoHex( data >> 4   ));
+    DbgSerial.print(DectoHex( data  & 0x0F));
 }
 
 void printHexa ( byte * data, byte pos)
 {
 
 for (byte i = 0; i < pos; ++i) {
-	Serial.print(DectoHex( data[i] >> 4 ));
-	Serial.print(DectoHex(data[i] & 0x0F));
+	DbgSerial.print(DectoHex( data[i] >> 4 ));
+	DbgSerial.print(DectoHex(data[i] & 0x0F));
 }
 }
 
@@ -111,7 +112,7 @@ void printTab(byte tab, byte n)
 {
 	tab = tab - n;
 	while (tab>0 ) {
-		Serial.print(' ');
+		DbgSerial.print(' ');
 		tab--;
 	}
 
@@ -130,92 +131,92 @@ void reportPrintHeader()
     secs /= 24 ;
     secs %= 31 ;
 
-    Serial.print(' ');
-    Serial.print(secs);
-    Serial.print(':');
-    Serial.print(heure);
-    Serial.print(':');
-    Serial.print(min);
-    Serial.print(':');
-    Serial.print(sec);
+    DbgSerial.print(' ');
+    DbgSerial.print(secs);
+    DbgSerial.print(':');
+    DbgSerial.print(heure);
+    DbgSerial.print(':');
+    DbgSerial.print(min);
+    DbgSerial.print(':');
+    DbgSerial.print(sec);
 
-    Serial.print(" Np:");
-    byte nb = Serial.print(NbPulsePerSec);
+    DbgSerial.print(" Np:");
+    byte nb = DbgSerial.print(NbPulsePerSec);
     printTab(6, nb);
-    Serial.print(' ');
+    DbgSerial.print(' ');
 }
 void reportPrint(const char * mes)
 {
-     if (isReportSerial()) Serial.print(mes); 
+     if (isReportSerial()) DbgSerial.print(mes); 
 }
 void reportSerial(const char* Name, byte id1, byte id2, byte bateryLevel, int temp, byte hum, word power, unsigned long totalpower, word pressure, word PressureSeaLevel, word Rain ,  byte* data, byte pos,word counter  ) {
 
     extern byte dumpPulse;
-    if (dumpPulse) Serial.println();
+    if (dumpPulse) DbgSerial.println();
 
-    printTab(TAB,Serial.print(Name)) ;
+    printTab(TAB,DbgSerial.print(Name)) ;
     reportPrintHeader();
 
-    Serial.print(" Id1:");
-    Serial.print(id1, HEX);
-    Serial.print(" Id2:");
-    Serial.print(id2,HEX);
-    Serial.print(" Bat:");
-    Serial.print(bateryLevel);
+    DbgSerial.print(" Id1:");
+    DbgSerial.print(id1, HEX);
+    DbgSerial.print(" Id2:");
+    DbgSerial.print(id2,HEX);
+    DbgSerial.print(" Bat:");
+    DbgSerial.print(bateryLevel);
 
     if (temp != INVALID_TEMP)
     {
-        Serial.print(" T:");
-        Serial.print(temp/10);
-        Serial.print(".");
-        Serial.print(temp%10);
+        DbgSerial.print(" T:");
+        DbgSerial.print(temp/10);
+        DbgSerial.print(".");
+        DbgSerial.print(temp%10);
     }
 
     if (hum != INVALID_HUM)
     {
-        Serial.print(" Hum:");
-        Serial.print(hum);
-        Serial.print('%');
+        DbgSerial.print(" Hum:");
+        DbgSerial.print(hum);
+        DbgSerial.print('%');
     }
     if (pressure != INVALID_PRESSURE)
     {
-        Serial.print(" Baro:");
-        Serial.print(pressure);
+        DbgSerial.print(" Baro:");
+        DbgSerial.print(pressure);
     }
     if (PressureSeaLevel != INVALID_PRESSURE)
     {
-        Serial.print(" BaroSea:");
-        Serial.print(PressureSeaLevel);
+        DbgSerial.print(" BaroSea:");
+        DbgSerial.print(PressureSeaLevel);
     }
     if (power != INVALID_POWER)
     {
-        Serial.print(" Power:");
-        Serial.print(power);
-        Serial.print(" Total Power:");
-        Serial.print(totalpower);
+        DbgSerial.print(" Power:");
+        DbgSerial.print(power);
+        DbgSerial.print(" Total Power:");
+        DbgSerial.print(totalpower);
     }
     if (Rain != INVALID_RAIN)
     {
-        Serial.print(" Rain:");
-        Serial.print(Rain);
+        DbgSerial.print(" Rain:");
+        DbgSerial.print(Rain);
     }
     if (counter != INVALID_BYTE )
     {
-        Serial.print(" Counter:");
-        Serial.print(counter);
+        DbgSerial.print(" Counter:");
+        DbgSerial.print(counter);
     }
 
     printRSSI();
-//     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
+//     DbgSerial.print(" RSSI:");DbgSerial.print(radio.readRSSI());
 
     if (getReportType() >= SERIAL_DEBUG) {
         if (data) {
-            Serial.print(' ');
+            DbgSerial.print(' ');
 //            printBinary(data, pos, 8);
             printHexa(data, pos );
-            Serial.print(',');
+            DbgSerial.print(',');
         }
     }
-    Serial.println();
+    DbgSerial.println();
 }
 

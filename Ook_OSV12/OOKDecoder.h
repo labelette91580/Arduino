@@ -77,7 +77,7 @@ OWL CM119	0x1A**	Power meter
 #include "Oregon.h"
 #include "Domotic.h"
 
-//#define DEBUG(message) Serial.print(message)
+//#define DEBUG(message) DbgSerial.print(message)
 #define DEBUG(message) 
 
 
@@ -101,9 +101,9 @@ public:
 /*
         if(total_bits == 4*16)
         {
-            Serial.println();
+            DbgSerial.println();
             printHexa(data, pos );
-            Serial.println();
+            DbgSerial.println();
         }
 */
         /*compute size of paxket */

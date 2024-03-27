@@ -1,4 +1,5 @@
 #include "DecodeMD230.h"
+#include "Config.h"
 
 /* bit 1 : |-|____ : short Pulse One / long  Pulse Low  */
 /* bit 0 : |-|_    : short Pulse One / short Pulse Low  */
@@ -137,14 +138,14 @@ const byte* DecodeMD230::getData (byte& count) const {
 
   
 void DecodeMD230::ReportSerial(){
-    Serial.print ("MD230:");
-    Serial.print (Code[0],HEX);Serial.print(' ');
-    Serial.print (Code[1],HEX);Serial.print(' ');
-    Serial.print (Code[2],HEX);Serial.print(' ');
-    Serial.print (Code[3],HEX);Serial.print(' ');
-    Serial.print (Code[4],HEX);Serial.print(' ');
-    Serial.print ('\n');
-    Serial.print ('\r');
+    DbgSerial.print ("MD230:");
+    DbgSerial.print (Code[0],HEX);DbgSerial.print(' ');
+    DbgSerial.print (Code[1],HEX);DbgSerial.print(' ');
+    DbgSerial.print (Code[2],HEX);DbgSerial.print(' ');
+    DbgSerial.print (Code[3],HEX);DbgSerial.print(' ');
+    DbgSerial.print (Code[4],HEX);DbgSerial.print(' ');
+    DbgSerial.print ('\n');
+    DbgSerial.print ('\r');
 
   }
 

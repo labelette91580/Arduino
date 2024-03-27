@@ -1,6 +1,7 @@
 #include "Arduino.h"
 #include <avr/pgmspace.h>
 #include "hager.h"
+#include "Config.h"
 
 //#include <timer.h>
 
@@ -208,11 +209,11 @@ void HagerPrint()
 	  //print
   for (byte i=0;i<8;i++) 
   {
-  	if (i%4==0)Serial.print(' ');
-  	if (HagerCmd[i]<16) Serial.print('0');
-  	Serial.print(HagerCmd[i],HEX);  
+  	if (i%4==0)DbgSerial.print(' ');
+  	if (HagerCmd[i]<16) DbgSerial.print('0');
+  	DbgSerial.print(HagerCmd[i],HEX);  
   }	
-  Serial.println();  
+  DbgSerial.println();  
 }
 void ManageHager(byte id4 , byte cmnd)
 {

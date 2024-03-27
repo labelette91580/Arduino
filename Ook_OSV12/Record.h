@@ -52,30 +52,30 @@ void Add(word p ){
 }
 
 void print4 (word p){
-     if (p<10)  Serial.print("000");
-else if (p<100) Serial.print("00");
-else if (p<1000)Serial.print("0");
-Serial.print(p);
+     if (p<10)  DbgSerial.print("000");
+else if (p<100) DbgSerial.print("00");
+else if (p<1000)DbgSerial.print("0");
+DbgSerial.print(p);
 };
 
 void print2 (word p){
-if (p<10)Serial.print("0");
-Serial.print(p);
+if (p<10)DbgSerial.print("0");
+DbgSerial.print(p);
 };
 
 void print(word p){
  
-  Serial.print(p);
+  DbgSerial.print(p);
   if ((++printed%LINELENGTH)==0)
-    Serial.println(' ');
+    DbgSerial.println(' ');
   else   
-    Serial.print(' ');
+    DbgSerial.print(' ');
 }
 
 void printDelta(word p , word deltaT ){
   word Dt = (millis() - LastPrint) ;
   if (Dt>deltaT){
-      Serial.println();
+      DbgSerial.println();
       printed=0;
   }
   print(p);
@@ -90,7 +90,7 @@ void PrintFifo( byte len ){
       	j = PulseNb - len + i    	;
       	print(Pulse[j] )   	;
       }
-      Serial.println(' ');    
+      DbgSerial.println(' ');    
 
       LastPrint = millis() ;
 

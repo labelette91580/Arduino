@@ -3,6 +3,7 @@
 #include <string.h>
 void printHexa ( byte * data, byte pos);
 bool isReportSerial();
+#include "Config.h"
 
 #ifdef WIN32
 #else
@@ -86,12 +87,12 @@ public:
         countPacket();
 
 #ifdef DEBUG_COUNT
-         Serial.print('C');Serial.print(getName());    Serial.print(PacketCount);   Serial.print(' ');
+         DbgSerial.print('C');DbgSerial.print(getName());    DbgSerial.print(PacketCount);   DbgSerial.print(' ');
 #endif
         if (PacketCount == PacketCountSeuil) {
             LastSend = millis();
 #ifdef DEBUG_COUNT
-            Serial.println();
+            DbgSerial.println();
 #endif
             return true;
         }

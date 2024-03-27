@@ -1,10 +1,15 @@
 //type de report serie 
-//si = define  : report serial forma domoticz (binaire)
+//si = REPORT_TYPE  : report serial forma domoticz (binaire)
+//si = REPORT_TYPE : report serial format text 
 #define REPORT_TYPE  REPORT_DOMOTIC
-
-//si =  : report serial format text 
 //#define REPORT_TYPE REPORT_SERIAL 
 //#define REPORT_TYPE SERIAL_DEBUG 
+
+//def raspbery pi serial com
+#define RaspPiSerial Serial
+
+//def debug  serial com
+#define DbgSerial Serial
 
 #ifndef WIN32
 #define RFM69_ENABLE

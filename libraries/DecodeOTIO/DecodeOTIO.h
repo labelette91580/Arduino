@@ -144,22 +144,22 @@ BIT 3 2 1 0 9 8 7 6   5     4 3 2 1 0 9 8   7 6 5 4   3 2 1 0
   }
   
   void ReportSerial(){
-    Serial.print ("OTIO ");
-		Serial.print(millis() / 1000);
-		Serial.print(" ");
-    Serial.print (Temp,HEX);
-    Serial.print (" T:");
+    DbgSerial.print ("OTIO ");
+		DbgSerial.print(millis() / 1000);
+		DbgSerial.print(" ");
+    DbgSerial.print (Temp,HEX);
+    DbgSerial.print (" T:");
     int t = getTemperature();
-    Serial.print (t/10);
-    Serial.print ('.');
+    DbgSerial.print (t/10);
+    DbgSerial.print ('.');
     t=t%10; if (t<0)t=-t;
-    Serial.print (t);
-    Serial.print (" Id:");
-    Serial.print (getId(),HEX);
-    Serial.print (" Bat:");
-    Serial.print (getBatteryLevel());
-    Serial.print ('\n');
-    Serial.print ('\r');
+    DbgSerial.print (t);
+    DbgSerial.print (" Id:");
+    DbgSerial.print (getId(),HEX);
+    DbgSerial.print (" Bat:");
+    DbgSerial.print (getBatteryLevel());
+    DbgSerial.print ('\n');
+    DbgSerial.print ('\r');
 
   }
 };

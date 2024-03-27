@@ -1,6 +1,7 @@
 
 #include <stdint.h>
 #include "bitstream.h"
+#include "Config.h"
 
 #define GETRAWVALUE(RETURN_TYPE,SIZE_WORD_IN_BIT)                                                                          \
     if (size > sizeof(RETURN_TYPE)*8 )                                                         \
@@ -79,22 +80,22 @@ void bitSreamtest()
     Data[4] = 0x55 ;
     Data[5] = 0xAA ;
     uint32_t d1,d2;
-      Serial.print("test bitstream\n");
+      DbgSerial.print("test bitstream\n");
 for ( int offs=0;offs<16;offs++)
         for ( int size=1;size<=32;size++)
             //             check(Data , offs,  size,0x2AAA);
 //            if ( offs == 1 && size == 17 )
             if ((d1=getRaw32bValue(Data , offs, size)) != (d2=GetRaw1bValue(Data , offs, size)) ) 
-            { Serial.print(" error1 " ); Serial.print( offs );Serial.print( ' ' );Serial.print( size ); Serial.print( ' ' );Serial.print( d1,HEX );Serial.print( ' ' );Serial.print( d2,HEX ); Serial.println();}
+            { DbgSerial.print(" error1 " ); DbgSerial.print( offs );DbgSerial.print( ' ' );DbgSerial.print( size ); DbgSerial.print( ' ' );DbgSerial.print( d1,HEX );DbgSerial.print( ' ' );DbgSerial.print( d2,HEX ); DbgSerial.println();}
 
     for ( int offs=0;offs<16;offs++)
         for ( int size=1;size<=16;size++)
             if (getRaw16bValue(Data , offs, size) != GetRaw1bValue(Data , offs, size) ) 
-            { Serial.print(" error2 " ); Serial.print( offs );Serial.print( ' ' );Serial.println( size ); }
+            { DbgSerial.print(" error2 " ); DbgSerial.print( offs );DbgSerial.print( ' ' );DbgSerial.println( size ); }
     for ( int offs=0;offs<16;offs++)
         for ( int size=1;size<=8;size++)
             if (getRaw08bValue(Data , offs, size) != GetRaw1bValue(Data , offs, size) ) 
-            { Serial.print(" error3 " ); Serial.print( offs );Serial.print( ' ' );Serial.println( size ); }
+            { DbgSerial.print(" error3 " ); DbgSerial.print( offs );DbgSerial.print( ' ' );DbgSerial.println( size ); }
 
 }
 #endif

@@ -64,6 +64,9 @@
     <ClCompile Include="bitstream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="header.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Domotic.h">

@@ -161,54 +161,54 @@ public:
     }
 
     void reportSerial(  ) {
-    Serial.print(millis() / 1000);
-    Serial.print(" Hager");
-    Serial.print(' ');
+    DbgSerial.print(millis() / 1000);
+    DbgSerial.print(" Hager");
+    DbgSerial.print(' ');
 
     for (byte i = 0; i < pos; i++) {
-        Serial.print(data[i] >> 4, HEX);
-        Serial.print(data[i] & 0x0F, HEX);
-        if (i==3) Serial.print(' ');
+        DbgSerial.print(data[i] >> 4, HEX);
+        DbgSerial.print(data[i] & 0x0F, HEX);
+        if (i==3) DbgSerial.print(' ');
     }
 
-    Serial.print(" addr:");
+    DbgSerial.print(" addr:");
     for (byte i = 0; i < 5; i++) {
-        Serial.print(data[i] >> 4, HEX);
-        Serial.print(data[i] & 0x0F, HEX);
+        DbgSerial.print(data[i] >> 4, HEX);
+        DbgSerial.print(data[i] & 0x0F, HEX);
     }
-    Serial.print(" cmd:");
-    Serial.print(data[5] >> 4, HEX);
-    Serial.print(data[5] & 0x0F, HEX);
-    Serial.print(" data:");
-    Serial.print(data[6] >> 4, HEX);
-    Serial.print(data[6] & 0x0F, HEX);
+    DbgSerial.print(" cmd:");
+    DbgSerial.print(data[5] >> 4, HEX);
+    DbgSerial.print(data[5] & 0x0F, HEX);
+    DbgSerial.print(" data:");
+    DbgSerial.print(data[6] >> 4, HEX);
+    DbgSerial.print(data[6] & 0x0F, HEX);
     
-    Serial.print(" ");
+    DbgSerial.print(" ");
     byte i = 8 ;
     do  {
         i--;
     	  if (data[6]& (1<<i)) 
-        	Serial.print('1');
+        	DbgSerial.print('1');
         else
-        	Serial.print('0');
-				if ( (i==6)||(i==3) )Serial.print(" ");
+        	DbgSerial.print('0');
+				if ( (i==6)||(i==3) )DbgSerial.print(" ");
 
     }while(i!=0);
    	
-    Serial.print(" Z");
-    Serial.print(GetZone(data)) ;
+    DbgSerial.print(" Z");
+    DbgSerial.print(GetZone(data)) ;
 
-    if (GetMode(data) == HORS_GEL ) Serial.print(" HORS_GEL");
-    if (GetMode(data) == CONFOR   ) Serial.print(" CONFOR");
-    if (GetMode(data) == ECO      ) Serial.print(" ECO");
-    if (GetMode(data) == ARRET    ) Serial.print(" ARRET");
+    if (GetMode(data) == HORS_GEL ) DbgSerial.print(" HORS_GEL");
+    if (GetMode(data) == CONFOR   ) DbgSerial.print(" CONFOR");
+    if (GetMode(data) == ECO      ) DbgSerial.print(" ECO");
+    if (GetMode(data) == ARRET    ) DbgSerial.print(" ARRET");
 
-    if (getProgramType(data) == PROGRAM    ) Serial.print(" PROGRAM");
-    if (getProgramType(data) == DEROGATION ) Serial.print(" DEROGATION");
-    if (getProgramType(data) == PERMANENT  ) Serial.print(" PERMANENT");
+    if (getProgramType(data) == PROGRAM    ) DbgSerial.print(" PROGRAM");
+    if (getProgramType(data) == DEROGATION ) DbgSerial.print(" DEROGATION");
+    if (getProgramType(data) == PERMANENT  ) DbgSerial.print(" PERMANENT");
 
     
-    Serial.println();
+    DbgSerial.println();
 }
     
 };

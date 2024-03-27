@@ -86,6 +86,7 @@
     <ClCompile Include="Domotic.cpp" />
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />
+    <ClCompile Include="header.c" />
     <ClCompile Include="Oregon.cpp" />
     <ClCompile Include="reportSerial.cpp" />
     <ClCompile Include="test\test.cpp" />

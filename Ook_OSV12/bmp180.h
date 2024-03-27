@@ -26,12 +26,12 @@ void bmp180_init()
         if (isReportSerial()){
             if (status != true)
             {
-                Serial.println(F("Bosch BMP180/BMP085 is not connected or fail to read calibration coefficients"));
+                DbgSerial.println(F("Bosch BMP180/BMP085 is not connected or fail to read calibration coefficients"));
             }
   
-            Serial.println(F("Bosch BMP180/BMP085 sensor is OK ")); //(F()) saves string to flash & keeps dynamic memory free
-            Serial.print(" coefPressureSeaLevel ");
-            Serial.println(coefPressureSeaLevel,6 );
+            DbgSerial.println(F("Bosch BMP180/BMP085 sensor is OK ")); //(F()) saves string to flash & keeps dynamic memory free
+            DbgSerial.print(" coefPressureSeaLevel ");
+            DbgSerial.println(coefPressureSeaLevel,6 );
         }
 }
 

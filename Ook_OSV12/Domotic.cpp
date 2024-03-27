@@ -89,7 +89,7 @@ EEPROM.begin(8);
 EEPROM.get(0,ToTalPowerWHeure);
 if (isReportSerial())
 {
-    Serial.print(" TotalPower:"); Serial.println(ToTalPowerWHeure); 
+    DbgSerial.print(" TotalPower:"); DbgSerial.println(ToTalPowerWHeure); 
 }
 if(ToTalPowerWHeure==0xFFFFFFFF){
     ToTalPowerWHeure=0;
@@ -103,7 +103,7 @@ void DomoticSaveToEEP()
     EEPROM.put(0,ToTalPowerWHeure);
     if (isReportSerial())
     {
-        Serial.print("save TotalPower:"); Serial.println(ToTalPowerWHeure); 
+        DbgSerial.print("save TotalPower:"); DbgSerial.println(ToTalPowerWHeure); 
     }
 #ifdef ESP8266
     //flush ram to flash with interrupts deactivated
@@ -198,7 +198,7 @@ void reportDomoticTemp(const char* Name, int temp, byte id1, byte id2, byte bate
         Send.Temp.battery_level = bateryLevel;
         Send.Temp.rssi = 9;
 
-        Serial.write((byte*)&Send.Temp, 9);
+        RaspPiSerial.write((byte*)&Send.Temp, 9);
     }
 }
 //temp = temperature * 10 
@@ -231,7 +231,7 @@ void reportDomoticTempHum(const char* Name, int temp, byte hum, byte id1, byte i
         Send.Temp_Hum.humidity = hum;
         Send.Temp_Hum.humidity_status = 0;
 
-        Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.Temp_Hum));
+        RaspPiSerial.write((byte*)&Send.Temp_Hum, sizeof(Send.Temp_Hum));
     }
 }
 void reportDomoticPower(const char* Name, byte* data, int size ) {
@@ -246,9 +246,9 @@ void reportDomoticPower(const char* Name, byte* data, int size ) {
         ToTalPowerWHeure += (CummulPowerWMin/60) ;
         CummulPowerWMin = CummulPowerWMin % 60  ;
     }
-//    Serial.print(ToTalPowerWHeure);
-//    Serial.print(" ");
-//    Serial.print( CummulPowerWMin);
+//    DbgSerial.print(ToTalPowerWHeure);
+//    DbgSerial.print(" ");
+//    DbgSerial.print( CummulPowerWMin);
 
 //    ToTalPowerWHeure = getTotalPower(data);
     if (isReportSerial())
@@ -280,7 +280,7 @@ void reportDomoticPower(const char* Name, byte* data, int size ) {
         Send.ENERGY.total5 = tlong.Car[1];
         Send.ENERGY.total6 = tlong.Car[0];
 
-        Serial.write((byte*)&Send.Temp_Hum, sizeof(Send.ENERGY));
+        RaspPiSerial.write((byte*)&Send.Temp_Hum, sizeof(Send.ENERGY));
     }
 }
 void reportDomoticTempBaro (const char* Name, byte id1 , float temp , float baro , float PressureSeaLevel , float altitude , uint8_t forecast , byte* data, byte pos )
@@ -300,7 +300,7 @@ void reportDomoticTempBaro (const char* Name, byte id1 , float temp , float baro
         Send._tTempBaro.baro = baro;
         Send._tTempBaro.altitude = altitude;
         Send._tTempBaro.forecast = forecast;
-        Serial.write((byte*)&Send._tTempBaro, sizeof(Send._tTempBaro));
+        RaspPiSerial.write((byte*)&Send._tTempBaro, sizeof(Send._tTempBaro));
     }
 }
 
@@ -352,7 +352,7 @@ void reportDomoticTempHumBaro (const char* Name,byte id1 , byte unit ,float temp
 
         Send.TEMP_HUM_BARO.forecast = (byte)forecast;
 
-        Serial.write((byte*)&Send.TEMP_HUM_BARO, sizeof(Send.TEMP_HUM_BARO));
+        RaspPiSerial.write((byte*)&Send.TEMP_HUM_BARO, sizeof(Send.TEMP_HUM_BARO));
     }
 }
 void DomoticStartReceive()
@@ -377,7 +377,7 @@ void DomoticStartReceive()
   Send.IRESPONSE.msg14='C';
   Send.IRESPONSE.msg15='O';
   Send.IRESPONSE.msg16='M';
-  Serial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
+  RaspPiSerial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
 
 }
 void DomoticStatus()
@@ -400,7 +400,7 @@ void DomoticStatus()
 
 		
 	
-  Serial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
+  RaspPiSerial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
 	
 }
 void reportHagerDomoticUnk ( const byte* data, byte pos ){
@@ -411,7 +411,7 @@ void reportHagerDomoticUnk ( const byte* data, byte pos ){
   for (byte i = 0; i < pos; ++i) {
       Send.UNDECODED.msg[i]= data[i];
   }
-  Serial.write((byte*)&Send.UNDECODED,Send.UNDECODED.packetlength+1  );
+  RaspPiSerial.write((byte*)&Send.UNDECODED,Send.UNDECODED.packetlength+1  );
 }
 
 extern byte GetMode(const byte* data) ;
@@ -453,7 +453,7 @@ void reportHagerDomoticSerial(const byte* data, byte pos) {
             Send.LIGHTING2.cmnd = 1;
         else
             Send.LIGHTING2.cmnd = 0;
-        Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
+        RaspPiSerial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
     }
 }
 void reportHagerDomotic(const byte* data, byte pos) {
@@ -478,31 +478,31 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
     if (isReportSerial())
     {
         extern byte dumpPulse;
-        if (dumpPulse) Serial.println();
+        if (dumpPulse) DbgSerial.println();
 
-        printTab(TAB,Serial.print("HEASY")) ;
+        printTab(TAB,DbgSerial.print("HEASY")) ;
         reportPrintHeader();
 
-        Serial.print (" Id:" );
+        DbgSerial.print (" Id:" );
         printHexaByte(id1);
         printHexaByte(id2);
         printHexaByte(id3);
         printHexaByte(id4);
-        Serial.print ( " unitcode:" );
-        Serial.print (unitcode);
-        Serial.print ( " CMD:" );
-        Serial.print (cmd);
+        DbgSerial.print ( " unitcode:" );
+        DbgSerial.print (unitcode);
+        DbgSerial.print ( " CMD:" );
+        DbgSerial.print (cmd);
 //      printRSSI();
-//     Serial.print(" RSSI:");Serial.print(radio.readRSSI());
+//     DbgSerial.print(" RSSI:");DbgSerial.print(radio.readRSSI());
 
     if (getReportType() >= SERIAL_DEBUG) {
         if (data) {
-            Serial.print(' ');
+            DbgSerial.print(' ');
 //            printBinary(data, pos, 8);
             printHexa(data, pos );
         }
     }
-    Serial.println();
+    DbgSerial.println();
 
 
     }
@@ -530,7 +530,7 @@ void reportDomoticHomeEasy( byte id1   ,byte id2   ,byte id3   ,byte id4   ,byte
         */
         Send.LIGHTING2.cmnd = cmd;
 
-        Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
+        RaspPiSerial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
     }
 }
 void reportDomoticMD230(const byte* data, byte pos) {
@@ -563,7 +563,7 @@ void reportDomoticMD230(const byte* data, byte pos) {
         else
             Send.LIGHTING2.cmnd = 1;
 
-        Serial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
+        RaspPiSerial.write((byte*)&Send.LIGHTING2, Send.LIGHTING2.packetlength + 1);
     }
 }
 
@@ -599,7 +599,7 @@ void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word Rai
 	Send.RAIN.raintotal3 = (byte)(RainCounter % 256);
 
 
-        Serial.write((byte*)&Send.RAIN, Send.RAIN.packetlength + 1);
+        RaspPiSerial.write((byte*)&Send.RAIN, Send.RAIN.packetlength + 1);
     }
 }
 
@@ -625,7 +625,7 @@ void reportDomoticRfxCount(byte id , word value )
         Send.RFXMETER.count3 = value >> 8;
         Send.RFXMETER.count4 = value & 0x00ff;
 
-        Serial.write((byte*)&Send.RFXMETER, Send.RFXMETER.packetlength + 1);
+        RaspPiSerial.write((byte*)&Send.RFXMETER, Send.RFXMETER.packetlength + 1);
     }
 }
 
