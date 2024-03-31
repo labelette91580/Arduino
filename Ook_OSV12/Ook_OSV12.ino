@@ -54,7 +54,7 @@ byte ledPin = LED_BUILTIN ;
 //1 = dump pulse len to serial
 byte dumpPulse=0;     ////format word
 byte dumpPulseByte=0; //format hexa byte / 10
-
+byte sendRfxPing=0;
 
 
 #ifdef ESP8266
@@ -511,18 +511,20 @@ void ManagePulseReception ( word p) {
                 }
                 lastMinute = Seconds/60;
 
-				if (lastMinute & 1 )
-					reportDomoticRfxCount(1,NbPulsePerMin);
-				else
-					reportDomoticRfxCount(2,NbDecodedPackets);
-			    NbPulsePerMin = 0;
-				
+                if(sendRfxPing)
+                {
+				    if (lastMinute & 1 )
+					    reportDomoticRfxCount(1,NbPulsePerMin);
+				    else
+					    reportDomoticRfxCount(2,NbDecodedPackets);
+			        NbPulsePerMin = 0;
+                }
                 //every hours
                 if((lastMinute/60)!= lastHour)
                 {
                     lastHour = lastMinute/60 ;
 
-                    if((lastHour/24)!= lastDay)
+//                    if((lastHour/24)!= lastDay)
                     {
                         lastDay = lastHour/24 ;
                         DomoticSaveToEEP();
@@ -618,14 +620,24 @@ void ManageDomoticCmdEmission() {
         DomoticStatus();
     }
     else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdRESET) ) {  
+#ifdef ESP8266
+        ESP.restart();
+#endif
     }
     else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdSETMODE) ) {  
 
-        if (Cmd.IRESPONSE.UNDECODEDenabled )
+        if (Cmd.IRESPONSE. BLINDST1enabled)
             setReportType(getReportType() | REPORT_SERIAL);
         else
             setReportType(getReportType() & ~REPORT_SERIAL);
         
+        if (Cmd.IRESPONSE. VISONICenabled)
+            sendRfxPing=1 ;
+        else
+            sendRfxPing=0 ;
+
+        DomoticStatus();
+
     }
     else
     {
@@ -717,11 +729,12 @@ void ManageDomoticCmdEmission() {
 #ifndef RASPBERRY_PI
         pinMode(PDATA, INPUT);
 #endif
+            delay(2);//wait end of transmit 
 
         attachInterrupt(digitalPinToInterrupt(PDATA) , ext_int_1, CHANGE);
 #ifdef RFM69_ENABLE
-        radio.setMode(RF69_MODE_STANDBY);
-        delay(10);
+//        radio.setMode(RF69_MODE_STANDBY);
+//        delay(10);
         radio.setMode(RF69_MODE_RX);
 #endif
     }

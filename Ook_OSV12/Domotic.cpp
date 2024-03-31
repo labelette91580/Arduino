@@ -398,7 +398,9 @@ void DomoticStatus()
   Send.IRESPONSE.HIDEKIenabled=1;
   Send.IRESPONSE.msg10    = FWtypeProXL1  ;    //Firmware type
 
-		
+  Send.IRESPONSE.BLINDST1enabled = isReportSerial();
+  extern byte sendRfxPing;
+  Send.IRESPONSE.VISONICenabled  = sendRfxPing     ;
 	
   RaspPiSerial.write((byte*)&Send.IRESPONSE,sizeof(Send.IRESPONSE));
 	
