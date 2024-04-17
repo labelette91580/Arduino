@@ -858,10 +858,6 @@ for (int i=0;i<10;i++)
 #endif
 
  
- const byte  Header[] = {
-21 ,	//0 : 1 / 208
-22 ,	//1 : 0 / 212
-0 };
 
 // void ManageHager(byte id4, byte unitcode, byte cmnd)
 // {

@@ -8,7 +8,7 @@
 
 #define DelayMicroseconds(VALUE) delayMicroseconds(VALUE);
 
-extern const byte  Header[];
+extern "C" const byte  Header[];
 
 //comand 
 /*
