@@ -40,6 +40,9 @@ DecodeOTIO Otio(3);
 #ifdef RAIN_ENABLE        
 #include "DecodeRain.h"
 #endif
+#ifdef PORTAIL_ENABLE        
+#include "DecodePortail.h"
+#endif
 
 #include "fifo.h"
 TFifo  fifo;
@@ -54,7 +57,7 @@ byte ledPin = LED_BUILTIN ;
 //1 = dump pulse len to serial
 byte dumpPulse=0;     ////format word
 byte dumpPulseByte=0; //format hexa byte / 10
-byte sendRfxPing=0;
+byte sendRfxPing=1;
 
 
 #ifdef ESP8266
@@ -132,6 +135,9 @@ char DecoderListInit[] =
 #ifdef RAIN_ENABLE        
                           "RAIN"     ";"
 #endif
+#ifdef PORTAIL_ENABLE        
+                          "PORTAIL"  ";"
+#endif
 "END;"
 ;
 
@@ -146,6 +152,8 @@ const char* DecodersName[] = {
 "RUBICSON" ,
 "HIDEKI"   ,
 "RAIN"     ,
+"PORTAIL"  ,
+
 0
 
 };
@@ -205,6 +213,10 @@ void createDecoderList(const char* DecoderList)
 #ifdef RAIN_ENABLE        
         if (stricmp(ptb,  "RAIN"     )==0) { Decoders[index++] = new   DecodeRain(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 #endif
+#ifdef PORTAIL_ENABLE        
+        if (stricmp(ptb,  "PORTAIL"     )==0) { Decoders[index++] = new   DecodePortail(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+#endif
+
         ptb=pte ;
         pte = strchr(ptb,';');
         Decoders[index]=0;

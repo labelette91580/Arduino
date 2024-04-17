@@ -1,8 +1,11 @@
+//#include "arduino.h"
+//#include <avr/pgmspace.h>
+#if defined(__AVR_ATmega168__) || defined(__AVR_ATmega328P__) || defined(__AVR_ATmega88) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega88__) || defined(__AVR_ATmega32U4__) || defined(__AVR_ATmega2560__)
 #include "arduino.h"
-#include <avr/pgmspace.h>
-
-//firt pulse = 1 length in dizaine de micro seconds 
-const byte Header[] PROGMEM= {
+ const byte Header[] PROGMEM= {
+#else
+	 const unsigned char Header[] = {
+#endif
 21 ,	//0 : 1 / 208
 22 ,	//1 : 0 / 212
 21 ,	//2 : 1 / 208
@@ -46,4 +49,3 @@ const byte Header[] PROGMEM= {
 0 ,	//40 : 1 / 208--21
 
 };
-

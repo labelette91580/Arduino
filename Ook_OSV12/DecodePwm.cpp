@@ -35,10 +35,13 @@ const char* Sstate[] = {
          SynchroHigh= TO10(pSynchroHigh) ;
          SynchroLow = TO10(pSynchroLow ) ; 
          Tolerance  = TO10(pTolerance ) ; 
-
+         resetDecoder ();
     }
     void DecodePwm::resetDecoder () {
-          DecodeOOK::resetDecoder ();
+        DecodeOOK::resetDecoder ();
+        //si pas de synchro
+        if (SynchroHigh==0)
+            state = WAITBitHigh ;
     }    
     //pMaxCode : the number of successive received equal value to return the current Code
     

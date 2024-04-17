@@ -3,7 +3,6 @@
 #include <string.h>
 void printHexa ( byte * data, byte pos);
 bool isReportSerial();
-#include "Config.h"
 
 #ifdef WIN32
 #else

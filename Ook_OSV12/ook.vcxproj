@@ -81,12 +81,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="bitstream.cpp" />
+    <ClCompile Include="DecodePortail.cpp" />
     <ClCompile Include="DecodePwm.cpp" />
     <ClCompile Include="DecodeRain.cpp" />
     <ClCompile Include="Domotic.cpp" />
     <ClCompile Include="fifo.cpp" />
     <ClCompile Include="hager.cpp" />
-    <ClCompile Include="header.c" />
     <ClCompile Include="Oregon.cpp" />
     <ClCompile Include="reportSerial.cpp" />
     <ClCompile Include="test\test.cpp" />
@@ -101,7 +101,6 @@
     <ClInclude Include="tfaDecoder.h" />
     <ClInclude Include="Domotic.h" />
     <ClInclude Include="fifo.h" />
-    <ClInclude Include="hager.h" />
     <ClInclude Include="nouveau dossier\Domotic.h" />
     <ClInclude Include="OOKDecoder.h" />
     <ClInclude Include="Oregon.h" />
@@ -112,6 +111,7 @@
   <ItemGroup>
     <ClCompile Include="Ook_OSV12.ino">
       <FileType>Document</FileType>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

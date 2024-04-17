@@ -21,9 +21,6 @@
     <ClCompile Include="Domotic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Oregon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,9 +46,6 @@
     <ClCompile Include="util.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="reportSerial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,15 +58,18 @@
     <ClCompile Include="bitstream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="header.c">
+    <ClCompile Include="DecodePortail.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test\test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Domotic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="hager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OOKDecoder.h">

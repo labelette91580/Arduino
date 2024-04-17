@@ -24,6 +24,7 @@
   #define RUBICSON_ENABLE    6
   #define HIDEKI_ENABLE      7
   #define RAIN_ENABLE        8
+#define PORTAIL_ENABLE 9
 
 // #define RASPBERRY_PI
 

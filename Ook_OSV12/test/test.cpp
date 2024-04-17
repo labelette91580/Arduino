@@ -709,20 +709,28 @@ TPulses HomePulsec = {
 };
 
 
+TPulses PortailPulsec = {
+/*KEY 1 */ 281,9998,1101,380,1021,420,1021,360,339,1120,281,1140,1001,420,281,1140,321,1100,341,1120,281,1120,321,1120,281,1120,321,1120,281,1120,1021,420,281,1120,1021,420,281,1120,321,1140,321,1080,999 ,440,321,1120,279,1120,321,1120,281,
+/*KEY 2 */281,9998,1061,398,1021,420,999,400,319,1120,279,1120,1021,420,281,1120,341,1120,321,1120,281,1120,321,1118,281,1120,321,1120,281,1120,1041,398,281,1120,1041,400,339,1120,281,1120,321,1120,281,1120,1019,420,281,1120,341,1100,279,
+/*KEY 3 */281,9998,1041,440,961,420,1039,420,261,1120,341,1120,1019,420,281,1120,321,1120,281,1120,341,1100,281,1120,339,1120,261,1120,341,1118,1021,360,341,1120,1021,420,281,1120,321,1120,281,1120,341,1120,261,1120,1041,420,261,1180,279,
+/*KEY 4 */281,9998,1101,360,1041,418,1021,360,341,1120,325,1056,1039,420,319,1120,281,1120,341,1120,261,1120,341,1120,261,1120,341,1120,301,1140,981,420,301,1140,981,420,341,1120,261,1120,341,1120,301,1080,341,1120,301,1120,1001,420,301,
+
+};
+
 #include "fifo.h"
 extern TFifo  fifo;
 #include  "reportSerial.h"
 void Setup (byte pData, byte pClk, byte pLed, const char* pDecoderList  ) ;
 
 //duree = coefA * duree + float coefB 
-void testOOK (TPulses* TestPulse, float coefA=1.0 , float coefB=0   )
+void testOOK (TPulses* TestPulse, float coefA=1.0 , float coefB=0 , char* decoders =  "OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;"  )
 {
     unsigned int PulseNb=0;
 
 //OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;
     setReportType(SERIAL_DEBUG);
 //    Setup ( 1, 2, 3, "HOMEEASY;"  );
-    Setup ( 1, 2, 3, "OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;"  );
+    Setup ( 1, 2, 3, decoders  );
 
 	for(;;)
 	{
@@ -795,7 +803,9 @@ char* fileContent ;
 int main(int, char**)
 {
 
-    
+        testOOK (&PortailPulsec  , 1.0,0.,("PORTAIL;") ) ;
+
+
     FILE* f = fopen("d1.txt","rb");
     fseek(f, 0, SEEK_END); // seek to end of file
     long size = ftell(f); // get current file pointer
@@ -847,10 +857,15 @@ for (int i=0;i<10;i++)
 
 #endif
 
-
- byte Header[] = {
+ 
+ const byte  Header[] = {
 21 ,	//0 : 1 / 208
 22 ,	//1 : 0 / 212
 0 };
 
-
+// void ManageHager(byte id4, byte unitcode, byte cmnd)
+// {
+// }
+// void HagerSetPin(byte pdata, byte pledpin )
+// {
+// }
