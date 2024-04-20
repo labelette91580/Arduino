@@ -46,7 +46,6 @@ const char* Sstate[] = {
     //pMaxCode : the number of successive received equal value to return the current Code
     
     DecodePwm::DecodePwm (byte pMaxCode) { 
-        resetDecoder(); 
         PacketCountSeuil=pMaxCode;
         Name ="P";
         max_bits = 17*4;
@@ -64,12 +63,17 @@ const char* Sstate[] = {
         case UNKNOWN :  /* test reception pulse high */
                         if ( TEST_PULSE(width,SynchroHigh,Tolerance)  && (data==1) )
                             state = WAITSyncLow ;
+                        //si pas de synchro
+                        if (SynchroHigh==0)
+                            state = WAITBitHigh ;
                         break ;
         case WAITSyncLow :  /* test reception pulse syn low */
                         if ( TEST_PULSE(width,SynchroLow,Tolerance)  && (data==0) )
                             state = WAITBitHigh ;
                         else
                             state = UNKNOWN ;
+                        if (SynchroHigh==0)
+                            state = WAITBitHigh ;
                         break ;
 
         case WAITBitHigh      :  

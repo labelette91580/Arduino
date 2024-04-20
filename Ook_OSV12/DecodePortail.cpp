@@ -13,14 +13,12 @@ uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
 
     DecodePortail::DecodePortail (byte pMaxCode) { 
         SetPulseDuration(1100,400,400,1100,0,0, 200);
-        resetDecoder(); 
         PacketCountSeuil=pMaxCode;
         Name ="R";
         max_bits =24;
 
     }
  
-void reportDomoticRain( byte id1   ,byte id2   ,byte id3   ,byte id4   ,word rain  ,byte battery_low,  byte* data, byte pos);
   void DecodePortail::report(){
 
         byte id1 = data[0];

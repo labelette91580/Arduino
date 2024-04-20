@@ -20,7 +20,7 @@ public:
 public:
     enum { UNKNOWN, T0, T1, T2, T3, OK, DONE , WAITSyncHigh,  WAITSyncLow , WAITBitHigh , WAITBit0High  , WAITBit0Low , WAITBit1High , WAITBit1Low};
 
-    void resetDecoder () ;
+    virtual void resetDecoder () ;
     
     DecodePwm (byte pMaxCode=2)  ;
     void SetPulseDuration ( word pPulseHigh1, word pPulseLow1, word pPulseHigh0, word pPulseLow0,  word  pSynchroHigh, word  pSynchroLow, word pTolerance )    ;
