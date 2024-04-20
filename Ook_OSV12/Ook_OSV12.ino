@@ -44,6 +44,25 @@ DecodeOTIO Otio(3);
 #include "DecodePortail.h"
 #endif
 
+#ifdef RFM69_ENABLE
+#include <RFM69.h>
+#include <RFM69registers.h>
+#include <SPI.h>
+RFM69 radio;
+#endif
+
+#include  "reportSerial.h"
+#include "hager.h"
+#ifdef HIDEKI_ENABLE        
+#include "tfaDecoder.h"
+#endif
+#ifdef BMP180_ENABLE
+#include "bmp180.h"
+#endif
+
+//extern 
+int rssiGetAverage();
+
 #include "fifo.h"
 TFifo  fifo;
 
@@ -55,15 +74,13 @@ TFifo  fifo;
 byte ledPin = LED_BUILTIN ;
 
 //1 = dump pulse len to serial
-byte dumpPulse=0;     ////format word
+byte dumpPulse=DUMPPULSE;     ////format word
 byte dumpPulseByte=0; //format hexa byte / 10
 byte sendRfxPing=1;
-
 
 #ifdef ESP8266
 byte PDATA = 5 ;// GPIO5 = D1 sur la carte wiimos
 byte PCLK  = 4 ;// GPIO4 = D2 sur la carte wiimos
-
 #else
 byte PDATA = 3 ;//pin for data input/output
 byte PCLK  = 4 ;//pin for clk  input/output
@@ -73,6 +90,7 @@ word    NbPulse  ;
 word    NbPulsePerSec ;
 word    NbPulsePerMin ;
 word    NbDecodedPackets ;
+word    NbDecodedPacketsLast ;
 
 //etat du pulse
 byte        PulsePinData;
@@ -82,35 +100,14 @@ word        lastMinute ;
 word        lastHour   ;
 word        lastDay   ;
 
-#ifdef RFM69_ENABLE
-#include <RFM69.h>
-#include <RFM69registers.h>
-#include <SPI.h>
-RFM69 radio;
-#endif
-
 // This is the Home Easy controller
 // This example will use a 433AM transmitter on
 // pin 3 : data pin
 // pin 4 : clk  pin
 HomeEasyTransmitter * easy;
 
-#include  "reportSerial.h"
-
-#include "hager.h"
-
-#ifdef HIDEKI_ENABLE        
-#include "tfaDecoder.h"
-#endif
-
-#ifdef BMP180_ENABLE
-#include "bmp180.h"
-#endif
-
 //OTIO;OOK;HAGER;HOMEEASY;MD230;RUBICSON;HIDEKI;RAIN;
-
 char DecoderListInit[] = 
-
 #ifdef OTIO_ENABLE        
                           "OTIO"     ";"
 #endif
@@ -141,7 +138,6 @@ char DecoderListInit[] =
 "END;"
 ;
 
-
 const char* DecodersName[] = {
 "",
 "OTIO"     ,
@@ -153,15 +149,10 @@ const char* DecodersName[] = {
 "HIDEKI"   ,
 "RAIN"     ,
 "PORTAIL"  ,
-
 0
-
 };
 
-
-
 DecodeOOK* Decoders [sizeof(DecodersName)/sizeof(char*)] ;
-
 
 byte getDecoderFromName (char *name)
 {
@@ -173,7 +164,6 @@ byte getDecoderFromName (char *name)
     }
     return 0;
 }
-
 void createDecoderList(const char* DecoderList)
 {
     byte index = 0 ;
@@ -214,7 +204,7 @@ void createDecoderList(const char* DecoderList)
         if (stricmp(ptb,  "RAIN"     )==0) { Decoders[index++] = new   DecodeRain(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 #endif
 #ifdef PORTAIL_ENABLE        
-        if (stricmp(ptb,  "PORTAIL"     )==0) { Decoders[index++] = new   DecodePortail(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        if (stricmp(ptb,  "PORTAIL"     )==0) { Decoders[index++] = new   DecodePortail(2)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 #endif
 
         ptb=pte ;
@@ -222,9 +212,6 @@ void createDecoderList(const char* DecoderList)
         Decoders[index]=0;
     }
 }
-
-int rssiGetAverage();
-
 inline static void write(word w)
 {
   static byte nbc = 0;
@@ -259,7 +246,6 @@ inline static void write(word w)
 
   
 }
-
 inline static void writeHexaByte(word w)
 {
   static byte nbc = 0;
@@ -315,13 +301,6 @@ void ext_int_1(void) {
 #include "SerialRfmCmd.h"
 #endif
 
-void Setup (byte pData, byte pClk, byte pLed, const char* DecoderList  ) ;
-
-void setup () {
-    setReportType(REPORT_TYPE);
-    Setup ( PDATA, PDATA, ledPin, DecoderListInit  );
-
-}
 void RadioInit()
 {
 #ifdef RFM69_ENABLE
@@ -349,13 +328,16 @@ void RadioInit()
 
 }
 void Setup (byte rxPin, byte txPin, byte pLed, const char* pDecoderList  ) {
-
     PDATA = rxPin;
     PCLK  = -1 ;
     ledPin = pLed;
     NbPulsePerMin = 0;
     NbDecodedPackets=0;
-
+    NbDecodedPacketsLast=0;
+    lastSeconds=0;
+    lastMinute =0;
+    lastHour   =0;
+    lastDay    =0;
 if (isReportSerial() )
     Serial.begin(2000000);
     //Serial.begin(115200);
@@ -403,7 +385,10 @@ DomoticInit();
 registerStdout();
 
 }
-
+void setup () {
+    setReportType(REPORT_TYPE);
+    Setup ( PDATA, PDATA, ledPin, DecoderListInit  );
+}
 
 /*
 void sendRfxCount2()
@@ -430,6 +415,12 @@ void sendRfxCount2()
 }
 */
 
+void cmdReset()
+{
+#ifdef ESP8266
+        ESP.restart();
+#endif
+}
 //2 : toogle pin 1!0 set
 void PulseLed(int Level)
 {
@@ -449,7 +440,6 @@ void PulseLed(int Level)
     digitalWrite(ledPin, ledPinLevel);  
 #endif
 }
-
  void managedDecoder(DecodeOOK* Decoder , word p , byte  PinData )
  {
     {
@@ -458,7 +448,6 @@ void PulseLed(int Level)
         if (Decoder->newPacket())
         {// ce sont bien nos sondes (signature, identification dans le 1er octet du header
             PulseLed(2);
-            
             Decoder->report();
             NbDecodedPackets++;
         }
@@ -470,11 +459,7 @@ void ManagePulseReception ( word p) {
     byte i=0;
     DecodeOOK* Decoder ;
         if (p > 00 ) {
-            if (dumpPulse)
-                if (p>00)
-                {       
-                        write(p);
-                }
+            if (dumpPulse) if (p>00) write(p);
             if (0)
             {
             char n = fifo.PWr-fifo.PRd;
@@ -489,19 +474,13 @@ void ManagePulseReception ( word p) {
                 NbPulse++;
                 NbPulsePerMin++;
             }
-            if (dumpPulseByte)
-                if (p>00)
-                {       
-                   writeHexaByte(p);
-                }
-
+            if (dumpPulseByte) if (p>00)  writeHexaByte(p);
 
 #if   OFFSET_DURATION_HIGH
             //offset sur pulse high for RFM69
             if(PulsePinData)
                 p+= OFFSET_DURATION_HIGH;
 #endif
-
             Seconds = millis() / 1000;
             //every seconds
             if (Seconds != lastSeconds)
@@ -509,20 +488,24 @@ void ManagePulseReception ( word p) {
                     lastSeconds = Seconds ;
                     NbPulsePerSec = NbPulse;
                     NbPulse = 0;
-//          Serial.print(".");
             }
             //every minute
             if ((Seconds/60)!= lastMinute )
             {
                 if (!DomoticReceptionInProgress())
                 {
-                    lastMinute = Seconds / 60;
 #ifdef BMP180_ENABLE
                     bmp180_read();
 #endif
                 }
                 lastMinute = Seconds/60;
 
+                if ( ( NbDecodedPackets - NbDecodedPacketsLast )<2 )
+                {
+                    //no packet receivrd  //reset
+                    cmdReset();
+                }
+                NbDecodedPacketsLast = NbDecodedPackets ;
                 if(sendRfxPing)
                 {
 				    if (lastMinute & 1 )
@@ -541,11 +524,7 @@ void ManagePulseReception ( word p) {
                         lastDay = lastHour/24 ;
                         DomoticSaveToEEP();
                     }
-
-
-
                 }
-
             }
 
             while ( (Decoder=Decoders[i++]) != 0 )
@@ -589,7 +568,6 @@ void ManagePulseReception ( word p) {
                 PulseLed(2);
             }
 #endif        
-
     }
 }
 void ManageDomoticCmdEmission() {
@@ -632,9 +610,7 @@ void ManageDomoticCmdEmission() {
         DomoticStatus();
     }
     else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdRESET) ) {  
-#ifdef ESP8266
-        ESP.restart();
-#endif
+        cmdReset();
     }
     else if ( (Cmd.ICMND.packettype == pTypeInterfaceControl)&& (Cmd.ICMND.cmnd==cmdSETMODE) ) {  
 
@@ -793,7 +769,6 @@ void printRSSI()
       LastPrintRSSI = millis() ;
 }
 }
-
 void reportTemperatureToDomotic()
 {
 #ifdef RFM69_ENABLE
