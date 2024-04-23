@@ -67,6 +67,21 @@ inline  bool AsSensorValueChanged(byte SensorId, byte sensorValue)
 	return false;
 }
 
+void DomoticInitEEP(){
+#ifdef HAVE_EEPROM 
+
+     //restaure last Total power from eeprom
+    #ifdef ESP8266
+    //declare eeprom flash eeprom emulation size
+    EEPROM.begin(8);
+    #endif
+    EEPROM.get(0,ToTalPowerWHeure);
+    if (isReportSerial())
+    {
+        DbgSerial.print(" TotalPower:"); DbgSerial.println(ToTalPowerWHeure); 
+    }
+#endif
+}
 
 void DomoticInit(){
 lastTime =  0;
@@ -82,24 +97,18 @@ DomoticPacketReceived = false;
 //wdt_disable()  ;
 
  //restaure last Total power from eeprom
-#ifdef ESP8266
-//declare eeprom flash eeprom emulation size
-EEPROM.begin(8);
-#endif
-EEPROM.get(0,ToTalPowerWHeure);
-if (isReportSerial())
-{
-    DbgSerial.print(" TotalPower:"); DbgSerial.println(ToTalPowerWHeure); 
-}
+DomoticInitEEP();
+
 if(ToTalPowerWHeure==0xFFFFFFFF){
     ToTalPowerWHeure=0;
     DomoticSaveToEEP();
 }
-
 }
 
 void DomoticSaveToEEP()
 {
+#ifdef HAVE_EEPROM 
+
     EEPROM.put(0,ToTalPowerWHeure);
     if (isReportSerial())
     {
@@ -110,6 +119,8 @@ void DomoticSaveToEEP()
     noInterrupts();
     EEPROM.commit();
     interrupts();
+#endif
+
 #endif
 }
 

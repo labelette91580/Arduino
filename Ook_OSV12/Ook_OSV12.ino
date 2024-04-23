@@ -76,7 +76,7 @@ byte ledPin = LED_BUILTIN ;
 //1 = dump pulse len to serial
 byte dumpPulse=DUMPPULSE;     ////format word
 byte dumpPulseByte=0; //format hexa byte / 10
-byte sendRfxPing=1;
+byte sendRfxPing=SENDRFXPING;
 
 #ifdef ESP8266
 byte PDATA = 5 ;// GPIO5 = D1 sur la carte wiimos
@@ -378,6 +378,22 @@ if (isReportSerial() )
 #else
 //     Serial.print(SERIAL_RX_BUFFER_SIZE);
 #endif
+
+#if DUMPPULSE == 1
+Serial.println("DUMPPULSE=1");
+#endif
+#if SENDRFXPING == 1
+Serial.println("SENDRFXPING=1");
+#endif
+
+#if ENABLE_RESET_CMD
+Serial.println("ENABLE_RESET_CMD");
+#endif
+#if HAVE_EEPROM
+Serial.println("HAVE_EEPROM");
+#endif
+
+
 }
 
 DomoticInit();
@@ -417,8 +433,10 @@ void sendRfxCount2()
 
 void cmdReset()
 {
+#ifdef ENABLE_RESET_CMD
 #ifdef ESP8266
         ESP.restart();
+#endif
 #endif
 }
 //2 : toogle pin 1!0 set
@@ -455,33 +473,10 @@ void PulseLed(int Level)
       }
     }
  }
-void ManagePulseReception ( word p) {
-    byte i=0;
-    DecodeOOK* Decoder ;
-        if (p > 00 ) {
-            if (dumpPulse) if (p>00) write(p);
-            if (0)
-            {
-            char n = fifo.PWr-fifo.PRd;
-            if (n<0)n+= SIZE_FIFO ;
-            if(n>0)
-                write(n);
-            }
 
-            //get pinData
-            PulsePinData = p & 1;
-            if (PulsePinData) {
-                NbPulse++;
-                NbPulsePerMin++;
-            }
-            if (dumpPulseByte) if (p>00)  writeHexaByte(p);
-
-#if   OFFSET_DURATION_HIGH
-            //offset sur pulse high for RFM69
-            if(PulsePinData)
-                p+= OFFSET_DURATION_HIGH;
-#endif
-            Seconds = millis() / 1000;
+ void manageSecondMinuteEvent()
+ {
+             Seconds = millis() / 1000;
             //every seconds
             if (Seconds != lastSeconds)
             {
@@ -526,6 +521,33 @@ void ManagePulseReception ( word p) {
                     }
                 }
             }
+}
+void ManagePulseReception ( word p) {
+    byte i=0;
+    DecodeOOK* Decoder ;
+        if (p > 00 ) {
+            if (dumpPulse) if (p>00) write(p);
+            if (0)
+            {
+            char n = fifo.PWr-fifo.PRd;
+            if (n<0)n+= SIZE_FIFO ;
+            if(n>0)
+                write(n);
+            }
+
+            //get pinData
+            PulsePinData = p & 1;
+            if (PulsePinData) {
+                NbPulse++;
+                NbPulsePerMin++;
+            }
+            if (dumpPulseByte) if (p>00)  writeHexaByte(p);
+
+#if   OFFSET_DURATION_HIGH
+            //offset sur pulse high for RFM69
+            if(PulsePinData)
+                p+= OFFSET_DURATION_HIGH;
+#endif
 
             while ( (Decoder=Decoders[i++]) != 0 )
             {
@@ -732,6 +754,7 @@ void ManageDomoticCmdEmission() {
   }
 }
 void Loop ( word p) {
+    manageSecondMinuteEvent();
     ManagePulseReception ( p);
     //read serial input & fill receive buffe(
     ReadDomoticCmdFromSerial();
