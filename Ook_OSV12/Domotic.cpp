@@ -260,6 +260,9 @@ void reportDomoticPower(const char* Name, byte* data, int size ) {
 //    DbgSerial.print(ToTalPowerWHeure);
 //    DbgSerial.print(" ");
 //    DbgSerial.print( CummulPowerWMin);
+    //gestion roll si resultat plus grand qu'un 32 bits
+    if (ToTalPowerWHeure > 9600000)
+        ToTalPowerWHeure=0;
 
 //    ToTalPowerWHeure = getTotalPower(data);
     if (isReportSerial())
