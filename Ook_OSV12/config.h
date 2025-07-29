@@ -1,7 +1,7 @@
 //type de report serie 
 //si = REPORT_TYPE  : report serial forma domoticz (binaire)
 //si = REPORT_TYPE : report serial format text 
-#define REPORT_TYPE  REPORT_DOMOTIC
+//#define REPORT_TYPE  REPORT_DOMOTIC
 //#define REPORT_TYPE REPORT_SERIAL 
 #define REPORT_TYPE SERIAL_DEBUG 
 
@@ -34,6 +34,8 @@
 #define DUMPPULSE 0
 #define SENDRFXPING 0
 
-#define ENABLE_RESET_CMD 1
+//#define ENABLE_RESET_CMD 1
 #define HAVE_EEPROM 1
+
+#define VERSION 17
 

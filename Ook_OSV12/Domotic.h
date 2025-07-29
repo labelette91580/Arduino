@@ -1,6 +1,5 @@
 #pragma once
 
-#define VERSION 16
 
 
 #define BYTE byte
