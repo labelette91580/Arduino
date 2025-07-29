@@ -54,7 +54,12 @@ public:
     byte PacketCountSeuil = 1 ; //nombre de packets identique recu pout detecter un nouveau packet 
     unsigned long LastSend ;
     const char* Name ="U";
-	
+	 unsigned long ResetTimeoutMs = 120000 ;
+
+     void setResetTimeoutMs(unsigned long pResetTimeoutMs)
+     {
+         ResetTimeoutMs = pResetTimeoutMs;
+     }
 	virtual sbyte decode(word width, byte level) { return -1; };
 
 //    virtual float getTemperature() {	  return (INVALID_TEMP);  }
@@ -81,7 +86,7 @@ public:
             return  false  ;  
         }
         //send at least every 2min
-        if ((millis() - LastSend) > 120000)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();}
+        if ((millis() - LastSend) > ResetTimeoutMs)  { lastdata[0]=lastdata[1]=lastdata[2]=lastdata[3] = 0;LastSend = millis();}
         
         countPacket();
 
