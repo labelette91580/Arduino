@@ -204,7 +204,7 @@ void createDecoderList(const char* DecoderList)
         if (stricmp(ptb,  "RAIN"     )==0) { Decoders[index++] = new   DecodeRain(1)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 #endif
 #ifdef PORTAIL_ENABLE        
-        if (stricmp(ptb,  "PORTAIL"     )==0) { Decoders[index++] = new   DecodePortail(2)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
+        if (stricmp(ptb,  "PORTAIL"     )==0) { Decoders[index++] = new   DecodePortail(3)     ;  reportPrint("add ") ; reportPrint(ptb) ;reportPrint("\n"); };
 #endif
 
         ptb=pte ;
@@ -215,10 +215,16 @@ void createDecoderList(const char* DecoderList)
 inline static void write(word w)
 {
   static byte nbc = 0;
-  if (w>=1000)
+  if (w>=10000)
   {
-  if (w>=9999) 
-      w=9998 + (w & 1) ;
+  Serial.write((char)(w/10000+'0') ); w = w % 10000; 
+  Serial.write((char)(w/1000 +'0') ); w = w % 1000; 
+  Serial.write((char)(w/100  +'0') ); w = w % 100;  
+  Serial.write((char)(w/10   +'0') ); w = w % 10;  
+  Serial.write((char)(w      +'0') );              
+  }
+  else if (w>=1000)
+  {
   Serial.write((char)(w/1000+'0') ); w = w % 1000; 
   Serial.write((char)(w/100 +'0') ); w = w % 100;  
   Serial.write((char)(w/10  +'0') ); w = w % 10;  
