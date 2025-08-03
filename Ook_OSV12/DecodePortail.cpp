@@ -12,11 +12,11 @@ uint8_t getRaw08bValue(uint8_t* data, uint8_t offset, uint8_t size);
 
 
     DecodePortail::DecodePortail (byte pMaxCode) { 
-        SetPulseDuration(1100,400,400,1100,0,0, 200);
+        SetPulseDuration(1100,400,400,1100,400,11100, 200);
         PacketCountSeuil=pMaxCode;
         Name ="R";
         max_bits =24;
-
+        setResetTimeoutMs(2000);
     }
  
   void DecodePortail::report(){
