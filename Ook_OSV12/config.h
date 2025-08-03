@@ -14,6 +14,7 @@
 #ifndef WIN32
 #define RFM69_ENABLE
 #define  BMP180_ENABLE        
+#define ENABLE_SERIAL_DEBUG 1
 #endif 
 
 //#define OTIO_ENABLE        1

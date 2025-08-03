@@ -247,8 +247,10 @@ inline static void write(word w)
   }
   nbc++;
   Serial.write(',');
-  if ((nbc%16) == 0 )
+  if ((nbc%16) == 0 ){
+    Serial.write('\r');
     Serial.write('\n');
+  }
 
   
 }
@@ -299,7 +301,7 @@ void ext_int_1(void) {
         //tranistion 1--0 : etat pulse = 1 : bit 0 = 1
         pulse |= 1 ;
 
-    if(pulse>130)
+    if(pulse>0)
         fifo.put(pulse);
 }
 
@@ -762,10 +764,15 @@ void ManageDomoticCmdEmission() {
 void Loop ( word p) {
     manageSecondMinuteEvent();
     ManagePulseReception ( p);
+#if ENABLE_SERIAL_DEBUG == 1
+    readKbdCmd();
     //read serial input & fill receive buffe(
+#else
     ReadDomoticCmdFromSerial();
+#endif
+
+
 #ifdef RFM69_ENABLE
-    //readKbdCmd();
 #endif
     ManageDomoticCmdEmission();
 }
