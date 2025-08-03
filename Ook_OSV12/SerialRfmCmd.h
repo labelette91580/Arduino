@@ -2,27 +2,32 @@
 
 #define CMD_LIST const char* cmd[]="drwiaxtsma"
 
+byte readCar()
+{
+    char Ah;
+    while (DbgSerial.available() ==0 ); 
+    Ah  = Serial.read();
+     DbgSerial.print(Ah);
+    return Ah;
+
+}
 byte readByte()
 {
     byte vByte=0;
     char Ah;
-           while (Serial.available() ==0 ); 
-           Ah  = Serial.read();
+           Ah  = readCar();
            if (Ah == ' ') {
-            while (Serial.available() ==0 ); 
-            Ah  = Serial.read();
+            Ah  = readCar();;
            }
 
            if (Ah == 'n') 
            {
                 //numerique decimale
-               while (Serial.available() ==0 );
-               Ah  = Serial.read();
+               Ah  = readCar();
                do{
                    vByte = vByte * 10  ;
                    vByte += Ah -'0';
-                   while (Serial.available() ==0 );
-                   Ah  = Serial.read();
+                   Ah  = readCar();
 
                }while (Ah!=' ');
            }
@@ -30,21 +35,18 @@ byte readByte()
            if (Ah == 'b') 
            {
             //bin
-               while (Serial.available() ==0 );
-               Ah  = Serial.read();
+               Ah  = readCar();
                do{
                    vByte = vByte << 1 ;
                    vByte += Ah -'0';
-                   while (Serial.available() ==0 );
-                   Ah  = Serial.read();
+                   Ah  = readCar();
 
                }while (Ah!=' ');
            }
            else
            {
                 //hexa
-               while (Serial.available() ==0 );
-               char Al  = Serial.read();
+               char Al  = readCar();
                HEXTODEC(Ah);
                HEXTODEC(Al);
                vByte = Ah*16+ Al ; 
@@ -63,7 +65,7 @@ void readKbdCmd()
     byte input;
     if (Serial.available() )
     {
-         input = Serial.read();
+         input = readCar();
         if (input == 'd') //d=dump all register values
         {
             radio.readAllRegs();
