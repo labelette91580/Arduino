@@ -159,6 +159,14 @@ void readKbdCmd()
           {
             if (dumpPulse==0) dumpPulse=1;else dumpPulse=0;
           }
+        if (input == 'z')
+        {
+            //reinit rfm
+          radio.setMode(RF69_MODE_STANDBY);
+          delay(10);
+          radio.setMode(RF69_MODE_RX);
+           DbgSerial.println("RxInit");
+        }
     }
 }
 
