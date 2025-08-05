@@ -52,6 +52,10 @@ void bmp180_read()
 	    reportDomoticTempBaro   ("BMP180", 1,    temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 50.0, 1);
     //	reportDomoticTempHumBaro("BMP180", 1, 1, temp, pressureInPa / 100, pressureInPa / coefPressureSeaLevel/100 , 1, 0, 0xff, 0xFF);
     }
+    else
+    {
+        bmp180_init();
+    }
 	
 }
 
