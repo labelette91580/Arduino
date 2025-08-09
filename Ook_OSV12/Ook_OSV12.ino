@@ -332,6 +332,16 @@ void RadioInit()
     radio.writeReg(REG_OOKPEAK,RF_OOKPEAK_THRESHTYPE_PEAK +RF_OOKPEAK_PEAKTHRESHDEC_000);
     //lna 50 h    
     radio.writeReg(REG_LNA, RF_LNA_ZIN_50);
+
+
+  // some easily tunable parameters
+  // radio.setBandwidth(OOK_BW_10_4); // generally this default value seems fine (10.4 kHz)
+  // radio.setRSSIThreshold(-90);     // |- use higher values when signal is too strong or too much noise
+//  radio.setFixedThreshold(15);        // |
+//  radio.setSensitivityBoost(SENSITIVITY_BOOST_HIGH); // it can increase sensitivity in some cases
+//  radio.setFrequencyMHz(433.9);
+
+
 #endif     
 
 }
