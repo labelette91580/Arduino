@@ -33,7 +33,27 @@ TBufferType TFifo::get()
   return p;
 }
 
+//read fifo without increment
+TBufferType TFifo::fetch()
+{
+	TBufferType p=0 ;
+	if (PWr!=PRd)
+	{
+    p=Pulse[PRd];
+  }
+  return p;
+}
+
 void TFifo::clear()
 {
 	PRd = PWr;
+}
+
+TBufferPtrType TFifo::available()
+{
+if(PWr >= PRd) 
+	return (PWr - PRd);
+else
+	return (SIZE_FIFO-PRd + PWr);
+
 }

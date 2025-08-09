@@ -17,6 +17,8 @@ bool empty();
 TFifo();
 ~TFifo();
 void clear();
+TBufferPtrType available();
+TBufferType fetch();
 
 TBufferType    Pulse[SIZE_FIFO];
 TBufferPtrType PWr;
