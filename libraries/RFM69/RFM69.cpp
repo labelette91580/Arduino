@@ -97,6 +97,20 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
     {255, 0}
   };
 
+
+    const byte CONFIG_OOK[][2] =
+  {
+    /* 0x01 */ { REG_OPMODE, RF_OPMODE_SEQUENCER_OFF | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
+    /* 0x02 */ { REG_DATAMODUL, RF_DATAMODUL_DATAMODE_CONTINUOUSNOBSYNC | RF_DATAMODUL_MODULATIONTYPE_OOK | RF_DATAMODUL_MODULATIONSHAPING_00 }, // no shaping
+    /* 0x03 */ { REG_BITRATEMSB, 0x03}, // bitrate: 32768 Hz
+    /* 0x04 */ { REG_BITRATELSB, 0xD1},
+    /* 0x19 */ { REG_RXBW, RF_RXBW_DCCFREQ_010 | RF_RXBW_MANT_24 | RF_RXBW_EXP_4}, // BW: 10.4 kHz
+    /* 0x1B */ { REG_OOKPEAK, RF_OOKPEAK_THRESHTYPE_PEAK | RF_OOKPEAK_PEAKTHRESHSTEP_000 | RF_OOKPEAK_PEAKTHRESHDEC_000 },
+    /* 0x1D */ { REG_OOKFIX, 6 }, // Fixed threshold value (in dB) in the OOK demodulator
+    /* 0x29 */ { REG_RSSITHRESH, 140 }, // RSSI threshold in dBm = -(REG_RSSITHRESH / 2)
+    /* 0x6F */ { REG_TESTDAGC, RF_DAGC_IMPROVED_LOWBETA0 }, // run DAGC continuously in RX mode, recommended default for AfcLowBetaOn=0
+    {255, 0}
+  };
   pinMode(_slaveSelectPin, OUTPUT);
   SPI.begin();
   
@@ -127,11 +141,16 @@ bool RFM69::initialize(byte freqBand, byte nodeID, byte networkID)
   return true;
 }
 
-void RFM69::setFrequency(uint32_t FRF)
+// set the frequency (in Hz)
+void RFM69::setFrequency(uint32_t freqHz)
 {
-  writeReg(REG_FRFMSB, FRF >> 16);
-  writeReg(REG_FRFMID, FRF >> 8);
-  writeReg(REG_FRFLSB, FRF);
+    #define RF69OOK_FSTEP 61.03515625 // == FXOSC/2^19 = 32mhz/2^19 (p13 in DS)
+
+  // TODO: p38 hopping sequence may need to be followed in some cases
+  freqHz /= RF69OOK_FSTEP; // divide down by FSTEP to get FRF
+  writeReg(REG_FRFMSB, freqHz >> 16);
+  writeReg(REG_FRFMID, freqHz >> 8);
+  writeReg(REG_FRFLSB, freqHz);
 }
 
 void RFM69::setMode(byte newMode)
@@ -548,3 +567,40 @@ void RFM69::rcCalibration()
   while ((readReg(REG_OSC1) & RF_OSC1_RCCAL_DONE) == 0x00);
 }
 
+// Set bitrate
+void RFM69::setBitrate(uint32_t bitrate)
+{
+  bitrate = 32000000 / bitrate; // 32M = XCO freq.
+  writeReg(REG_BITRATEMSB, bitrate >> 8);
+  writeReg(REG_BITRATELSB, bitrate);
+}
+
+// set OOK bandwidth
+void RFM69::setBandwidth(uint8_t bw)
+{
+  writeReg(REG_RXBW, readReg(REG_RXBW) & 0xE0 | bw);
+}
+
+// set RSSI threshold
+void RFM69::setRSSIThreshold(int8_t rssi)
+{
+  writeReg(REG_RSSITHRESH, (-rssi << 1));
+}
+
+// set OOK fixed threshold
+void RFM69::setFixedThreshold(uint8_t threshold)
+{
+  writeReg(REG_OOKFIX, threshold);
+}
+
+// set sensitivity boost in REG_TESTLNA
+// see: http://www.sevenwatt.com/main/rfm69-ook-dagc-sensitivity-boost-and-modulation-index
+void RFM69::setSensitivityBoost(uint8_t value)
+{
+  writeReg(REG_TESTLNA, value);
+}
+// Set literal frequency using floating point MHz value
+void RFM69::setFrequencyMHz(float f)
+{
+  setFrequency(f * 1000000);
+}

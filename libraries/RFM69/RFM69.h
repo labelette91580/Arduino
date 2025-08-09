@@ -109,6 +109,7 @@ class RFM69 {
     bool ACKRequested();
     void sendACK(const void* buffer = "", uint8_t bufferSize=0);
     void setFrequency(uint32_t FRF);
+    void setFrequencyMHz(float f);
     void encrypt(const char* key);
     void setCS(byte newSPISlaveSelect);
     int readRSSI(bool forceTrigger=false);
@@ -123,6 +124,11 @@ class RFM69 {
     byte readReg(byte addr);
     void writeReg(byte addr, byte val);
     void readAllRegs();
+	void setBandwidth(uint8_t bw);
+    void setBitrate(uint32_t bitrate);
+	void setRSSIThreshold(int8_t rssi);
+	void setFixedThreshold(uint8_t threshold);
+	void setSensitivityBoost(uint8_t value);
     void setMode(byte mode);
     void PrintReg(byte regAddr , byte regVal);
 

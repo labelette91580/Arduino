@@ -111,6 +111,7 @@
 #define REG_AESKEY16		  0x4D
 #define REG_TEMP1			    0x4E
 #define REG_TEMP2			    0x4F
+#define REG_TESTLNA       0x58
 #define REG_TESTPA1       0x5A //only present on RFM69HW/SX1231H
 #define REG_TESTPA2       0x5C //only present on RFM69HW/SX1231H
 #define REG_TESTDAGC      0x6F
@@ -1075,8 +1076,18 @@
 #define RF_TEMP1_ADCLOWPOWER_ON			0x01  // Default
 #define RF_TEMP1_ADCLOWPOWER_OFF		0x00
 
+// RegTestLna
+#define RF_TESTLNA_NORMAL           0x1B
+#define RF_TESTLNA_HIGH_SENSITIVITY 0x2D
+
+
 // RegTestDagc 0x6F: demodulator config and IO mode config
 #define RF_DAGC_NORMAL              0x00  // Reset value
 #define RF_DAGC_IMPROVED_LOWBETA1   0x20  //
 #define RF_DAGC_IMPROVED_LOWBETA0   0x30  // Recommended default
+
+
+// REG_TESTLNA (SensitivityBoost) values
+#define SENSITIVITY_BOOST_NORMAL  0x1B
+#define SENSITIVITY_BOOST_HIGH    0x2D
 
