@@ -12,13 +12,14 @@ class TFifo {
 public:
 void init () ;
 void put(TBufferType p);
+void poke(TBufferType p);
 TBufferType get();
 bool empty();	
 TFifo();
 ~TFifo();
 void clear();
 TBufferPtrType available();
-TBufferType fetch();
+TBufferType peek();
 
 TBufferType    Pulse[SIZE_FIFO];
 TBufferPtrType PWr;

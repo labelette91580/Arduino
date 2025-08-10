@@ -787,8 +787,38 @@ void Loop ( word p) {
     ManageDomoticCmdEmission();
 }
 
+word fifoget1()
+{
+    word p1=0;
+    if(fifo.available() >=3)
+    {
+        p1 = fifo.get();
+        word p2 = fifo.peek();
+        if(p2<50)
+        {
+            p1 +=  fifo.get() + fifo.get() + 1 ;
+        }
+    }
+    return p1;
+}
+word fifoget2()
+{
+    word p1=0;
+    while (fifo.available() >=3)
+    {
+        p1 = fifo.get();
+        word p2 = fifo.peek();
+        if(p2<50)
+        {
+            p1 +=  fifo.get() + fifo.peek() + 1 ;
+            fifo.poke(p1);
+            p1=0;
+        }
+    }
+    return p1;
+}
 void loop ( ) {
-    word p = fifo.get();
+    word p = fifoget2();
     Loop(p);
 }
 

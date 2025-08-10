@@ -17,6 +17,10 @@ bool TFifo::empty()
 {
 return(PWr==PRd);
 }
+void TFifo::poke(TBufferType p)
+{
+    Pulse[PRd]=p;
+}
 void TFifo::put(TBufferType p)
 {
     Pulse[PWr++]=p;
@@ -34,13 +38,13 @@ TBufferType TFifo::get()
 }
 
 //read fifo without increment
-TBufferType TFifo::fetch()
+TBufferType TFifo::peek()
 {
 	TBufferType p=0 ;
 	if (PWr!=PRd)
 	{
-    p=Pulse[PRd];
-  }
+	p=Pulse[PRd];
+	}
   return p;
 }
 
