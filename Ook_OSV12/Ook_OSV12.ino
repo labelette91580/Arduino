@@ -301,7 +301,7 @@ void ext_int_1(void) {
         //tranistion 1--0 : etat pulse = 1 : bit 0 = 1
         pulse |= 1 ;
 
-    if(pulse>0)
+    if(pulse>130)
         fifo.put(pulse);
 }
 
@@ -505,12 +505,6 @@ void PulseLed(int Level)
             //every minute
             if ((Seconds/60)!= lastMinute )
             {
-                if (!DomoticReceptionInProgress())
-                {
-#ifdef BMP180_ENABLE
-                    bmp180_read();
-#endif
-                }
                 lastMinute = Seconds/60;
 
                 if ( ( NbDecodedPackets - NbDecodedPacketsLast )<2 )
@@ -531,6 +525,13 @@ void PulseLed(int Level)
                 if((lastMinute/60)!= lastHour)
                 {
                     lastHour = lastMinute/60 ;
+
+                    if (!DomoticReceptionInProgress())
+                    {
+                        #ifdef BMP180_ENABLE
+                        bmp180_read();
+                        #endif
+                    }
 
 //                    if((lastHour/24)!= lastDay)
                     {
@@ -818,7 +819,7 @@ word fifoget2()
     return p1;
 }
 void loop ( ) {
-    word p = fifoget2();
+    word p = fifo.get();
     Loop(p);
 }
 
