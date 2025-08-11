@@ -451,6 +451,11 @@ void sendRfxCount2()
 
 void cmdReset()
 {
+    if (isReportSerial())
+    {
+        DbgSerial.print("Reset");
+    }
+    delay(10);
 #ifdef ENABLE_RESET_CMD
 #ifdef ESP8266
         ESP.restart();
@@ -507,12 +512,17 @@ void PulseLed(int Level)
             {
                 lastMinute = Seconds/60;
 
-                if ( ( NbDecodedPackets - NbDecodedPacketsLast )<2 )
+                //every 10 min
+                if ( (lastMinute%10)==0 )
                 {
-                    //no packet receivrd  //reset
-                    cmdReset();
+
+                    if ( ( NbDecodedPackets - NbDecodedPacketsLast )<2 )
+                    {
+                        //no packet receivrd  //reset
+                        cmdReset();
+                    }
+                    NbDecodedPacketsLast = NbDecodedPackets ;
                 }
-                NbDecodedPacketsLast = NbDecodedPackets ;
                 if(sendRfxPing)
                 {
 				    if (lastMinute & 1 )
