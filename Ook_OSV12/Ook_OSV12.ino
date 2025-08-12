@@ -786,6 +786,10 @@ void Loop ( word p) {
     manageSecondMinuteEvent();
     ManagePulseReception ( p);
 #if ENABLE_SERIAL_DEBUG == 1
+
+    #if REPORT_TYPE == REPORT_DOMOTIC
+    erreur : commande serie ne peux pas etre active avec DOMOTIC output
+    #endif
     readKbdCmd();
     //read serial input & fill receive buffe(
 #else

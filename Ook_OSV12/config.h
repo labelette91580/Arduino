@@ -1,9 +1,9 @@
 //type de report serie 
 //si = REPORT_TYPE  : report serial forma domoticz (binaire)
 //si = REPORT_TYPE : report serial format text 
-//#define REPORT_TYPE  REPORT_DOMOTIC
+#define REPORT_TYPE  REPORT_DOMOTIC
 //#define REPORT_TYPE REPORT_SERIAL 
-#define REPORT_TYPE SERIAL_DEBUG 
+//#define REPORT_TYPE SERIAL_DEBUG 
 
 //def raspbery pi serial com
 #define RaspPiSerial Serial
@@ -14,7 +14,7 @@
 #ifndef WIN32
 #define RFM69_ENABLE
 #define  BMP180_ENABLE        
-#define ENABLE_SERIAL_DEBUG 1
+//#define ENABLE_SERIAL_DEBUG 1
 #endif 
 
 //#define OTIO_ENABLE        1
@@ -35,7 +35,7 @@
 #define DUMPPULSE 0
 #define SENDRFXPING 0
 
-//#define ENABLE_RESET_CMD 1
+#define ENABLE_RESET_CMD 1
 #define HAVE_EEPROM 1
 
 #define VERSION 17
